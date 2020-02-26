@@ -4,22 +4,51 @@
 
 using namespace std;
 
-int getMaxArea(vector<int> tc) {
-    int tmpArea = 0;
-    int maxArea = -1;
-    int minHeight = 0;
+int getMaxArea(const vector<int>& tc, int begin, int end) {
+    int maxArea = 0;
+    int left, mid, right;
 
-    for(int i = 0; i < tc.size(); i++) {
-        minHeight = tc[i];
-        for(int j = i; j < tc.size(); j++) {
-            minHeight = min(minHeight, tc[j]);
-            tmpArea = (j-i+1) * minHeight;
+    if(end <= begin) return tc[begin];
 
-            if(maxArea < 0 || maxArea < tmpArea) {
-                maxArea = tmpArea;
-            }
+    left = getMaxArea(tc, begin, (begin + end)/2 );
+    right = getMaxArea(tc, (begin + end)/2 + 1, end);
+    
+    int midleft, midright;
+    int hileft, hiright;
+    int minHeight;
+
+    midleft = (begin + end)/2;
+    midright = (begin + end)/2 + 1;
+    minHeight = min(tc[midleft], tc[midright]);
+    mid = 0;
+
+    while(midleft >= begin && midright <= end) {
+        mid = max(mid, minHeight * (midright - midleft + 1));
+        
+        if(midright+1 <= end) {
+            hiright = tc[midright+1];
+        } else {
+            hiright = 0;
+        }
+
+        if(midleft-1 >= begin) {
+            hileft = tc[midleft-1];
+        } else {
+            hileft = 0;
+        }
+
+        if(hiright > hileft) {
+            midright++;
+            minHeight = min(minHeight, tc[midright]);
+        } else {
+            midleft--;
+            minHeight = min(minHeight, tc[midleft]);
         }
     }
+
+    maxArea = max(maxArea, left);
+    maxArea = max(maxArea, mid);
+    maxArea = max(maxArea, right);
 
     return maxArea;
 }
@@ -39,7 +68,7 @@ int main() {
     }
 
     for(int i = 0 ; i < c; i++) {
-        cout << getMaxArea(tc[i]) << endl;
+        cout << getMaxArea(tc[i], 0, tc[i].size()-1) << endl;
     }
 
 }
