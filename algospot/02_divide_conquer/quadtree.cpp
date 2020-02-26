@@ -28,7 +28,7 @@ void flipTree(string s) {
     if(s[0] != 'x') {
         cout << s[0];
         return;
-    else {
+    } else {
         cout << 'x';
         s = s.substr(1);
     }
