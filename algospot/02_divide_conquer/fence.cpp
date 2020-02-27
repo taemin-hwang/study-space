@@ -12,7 +12,7 @@ int getMaxArea(const vector<int>& tc, int begin, int end) {
 
     left = getMaxArea(tc, begin, (begin + end)/2 );
     right = getMaxArea(tc, (begin + end)/2 + 1, end);
-    
+
     int midleft, midright;
     int hileft, hiright;
     int minHeight;
@@ -24,7 +24,7 @@ int getMaxArea(const vector<int>& tc, int begin, int end) {
 
     while(midleft >= begin && midright <= end) {
         mid = max(mid, minHeight * (midright - midleft + 1));
-        
+
         if(midright+1 <= end) {
             hiright = tc[midright+1];
         } else {
