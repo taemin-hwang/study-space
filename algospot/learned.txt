@@ -1,0 +1,34 @@
+
+NOTE: description of lesson and learned
+
+==================================================
+fanmeeting.cpp
+==================================================
+#include <bitset>
+bitset<200000> starBit("111111001");
+starBit = starBit >> 1;
+
+==================================================
+fence.cpp
+==================================================
+
+int getMaxArea(const vector<int>& tc, int begin, int end) {
+    int maxArea = 0;
+    int left, mid, right;
+
+    if(end <= begin) return tc[begin];
+
+    left = getMaxArea(tc, begin, (begin + end)/2 );
+    right = getMaxArea(tc, (begin + end)/2 + 1, end);
+
+    //...
+    //...
+}
+
+=================================================
+quadtree.cpp
+=================================================
+#include <string>
+string s;
+s.substr(int len);
+s.substr(int begin, int len);
