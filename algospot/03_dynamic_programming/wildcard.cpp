@@ -26,53 +26,43 @@ bool isMatched(string wildcard, string filename) {
     }
     wildcard = tmp;
 
-    while(idx < wildcard.size() || idx < filename.size()) {
-        if(idx >= wildcard.size()) {
-            if(filename[idx] == '*') {
-                filename = filename.substr(0, idx);
-            }
-            break;
+    string wildcardtmp;
+    for(int i = 0 ; i < wildcard.size(); i++) {
+        if(i == wildcard.size()-1) {
+            if(wildcard[i] == '*') filename = wildcard;
         }
-
-        if(idx >= filename.size()) {
-            if(wildcard[idx] == '*') {
-                wildcard = wildcard.substr(0, idx);
-            }
-            break;
-        }
-
-        if(wildcard[idx] != filename[idx]) {
-            if(wildcard[idx] != '*' && wildcard[idx] != '?' && filename[idx] != '*' && filename[idx] != '?') {
-                break;
-            }
-            else if(wildcard[idx] == '*' || filename[idx] == '*') {
-                if(wildcard[idx] == '*') {
-                    char ch = 0;
-                    for(int i = idx+1; i < wildcard.size(); i++) {
-                        if(wildcard[i] != '*') {
-                            ch = wildcard[i];
-                            break;
-                        }
+        if(wildcard[i] != filename[i]) {
+            if(wildcard[i] == '?') {
+                filename[i] = wildcard[i];
+            } else if(wildcard[i] == '*') {
+                char ch = 0;
+                for(int j = i+1; j < wildcard.size(); j++) {
+                    if(wildcard[j] != '*') {
+                        ch = wildcard[j];
+                        wildcardtmp = wildcard.substr(j+1);
+                        break;
                     }
-
-                    if(ch == 0) {
-                        wildcard = filename;
+                }
+                if(ch == 0) {
+                    filename = wildcard;
+                    break;
+                } else {
+                    if(filename.rfind(ch, filename.size()-1) == string::npos) {
                         break;
                     } else {
-
+                        int idx = filename.rfind(ch, filename.size()-1);
+                        tmp = filename.substr(0, idx+1);
+                        wildcard = tmp + wildcardtmp;
+                        i = idx;
                     }
-
-                } else {
-
                 }
-            }
-            else if(wildcard[idx] == '?' || filename[idx] == '?') {
-                wildcard[idx] = filename[idx];
+            } else {
+                break;
             }
         }
-        idx++;
     }
 
+    //cout << wildcard << ", " << filename << endl;
     return wildcard == filename;
 }
 
@@ -96,8 +86,7 @@ int main() {
     wildcard.resize(c);
 
     for(int i = 0 ; i < c; i++) {
-        wildcard[i].resize(0);
-        cin >> wildcard[i][0];
+        cin >> wildcard[i];
         cin >> w;
         filename[i].resize(w);
         for(int j = 0; j < w; j++) {
@@ -107,6 +96,7 @@ int main() {
 
     for(int i = 0 ; i < c; i++) {
         vector<string> ans = getMatchedFile(wildcard[i], filename[i]);
+        sort(ans.begin(), ans.end());
         for(auto p : ans) {
             cout << p << endl;
         }
