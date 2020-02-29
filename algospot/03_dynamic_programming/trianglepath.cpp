@@ -6,21 +6,18 @@
 using namespace std;
 
 int cache[100][100];
-int maxPath = 0;
-int getMaxPath(const vector<vector<int>>& tc, int x, int y, int sum) {
-    if(x >= tc.size()) return sum;
+int n;
+int getMaxPath(const vector<vector<int>>& tc, int x, int y) {
+    if(x == n-1) return tc[x][y];
     int &ret = cache[x][y];
 
-    if(ret == -1 || ret < sum + tc[x][y]) ret = sum + tc[x][y];
-    else return ret;
-
-    ret = max(getMaxPath(tc, x+1, y, sum+tc[x][y]), getMaxPath(tc, x+1, y+1, sum+tc[x][y]));
-    if(maxPath < ret) maxPath = ret;
+    if(ret != -1) return tc[x][y];
+    ret = max(getMaxPath(tc, x+1, y), getMaxPath(tc, x+1, y+1)) + tc[x][y];
     return ret;
 }
 
 int main() {
-    int c, n;
+    int c;
     cin >> c;
     vector<vector<vector<int>>> tc;
 
@@ -38,7 +35,7 @@ int main() {
 
     for(int i = 0 ; i < c; i++) {
         memset(cache, -1, sizeof(cache));
-        maxPath = 0;
-        cout << getMaxPath(tc[i], 0, 0, 0) << endl;
+        n = tc[i].size();
+        cout << getMaxPath(tc[i], 0, 0) << endl;
     }
 }
