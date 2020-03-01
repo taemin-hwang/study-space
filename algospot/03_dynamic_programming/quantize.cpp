@@ -5,6 +5,7 @@
 #include <cstring>
 #include <algorithm>
 #include <cmath>
+#include <numeric>
 
 using namespace std;
 
@@ -21,10 +22,18 @@ int getDevian(int begin, int end, int num, int idx) {
 }
 
 int getMinDevian(int begin, int end, int idx) {
+    if(begin == end) return tc[idx][begin];
     int ret = INT_MAX;
-    for(int i = 1 ; i <= tc[idx][end] ; i++) {
-        ret = min(ret, getDevian(begin, end, i, idx));
+    int num;
+    int sum = 0;
+    for(int i = begin ; i <= end; i++) {
+        sum += tc[idx][i];
     }
+    num = sum / (end - begin + 1);
+    ret = min(ret, getDevian(begin, end, num-1, idx));
+    ret = min(ret, getDevian(begin, end, num, idx));
+    ret = min(ret, getDevian(begin, end, num+1, idx));
+
     return ret;
 }
 
@@ -32,6 +41,7 @@ int quantize(int begin, int end, int qt, int idx) {
     int &ret = cache[begin][end][qt];
     if(ret != -1) return ret;
 
+    cout << begin << ", " << end << " : " << qt << endl;
     ret = INT_MAX;
     if(qt == 1) {
         ret = getMinDevian(begin, end, idx);
@@ -39,10 +49,9 @@ int quantize(int begin, int end, int qt, int idx) {
     }
 
     for(int i = begin; i <= end - qt + 1; i++) {
-        //if(tc[idx][i] > tc[idx][begin])
-            ret = min(ret, getMinDevian(begin, i, idx) + quantize(i+1, end, qt-1, idx));
+        ret = min(ret, getMinDevian(begin, i, idx) + quantize(i+1, end, qt-1, idx));
     }
-
+    cout << "ret : " << ret << endl;
     return ret;
 }
 
