@@ -8,10 +8,9 @@ using namespace std;
 int cache[100][100];
 int n;
 int getMaxPath(const vector<vector<int>>& tc, int x, int y) {
-    if(x == n-1) return tc[x][y];
     int &ret = cache[x][y];
-
-    if(ret != -1) return tc[x][y];
+    if(x == n-1) return ret = tc[x][y];
+    if(ret != -1) return ret;
     ret = max(getMaxPath(tc, x+1, y), getMaxPath(tc, x+1, y+1)) + tc[x][y];
     return ret;
 }
