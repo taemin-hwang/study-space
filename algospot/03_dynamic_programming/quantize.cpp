@@ -22,7 +22,7 @@ int getDevian(int begin, int end, int num, int idx) {
 }
 
 int getMinDevian(int begin, int end, int idx) {
-    if(begin == end) return tc[idx][begin];
+    if(begin == end) return 0;
     int ret = INT_MAX;
     int num;
     int sum = 0;
@@ -38,10 +38,10 @@ int getMinDevian(int begin, int end, int idx) {
 }
 
 int quantize(int begin, int end, int qt, int idx) {
+    if(begin >= end -qt +1) return 0;
     int &ret = cache[begin][end][qt];
     if(ret != -1) return ret;
 
-    cout << begin << ", " << end << " : " << qt << endl;
     ret = INT_MAX;
     if(qt == 1) {
         ret = getMinDevian(begin, end, idx);
@@ -50,8 +50,8 @@ int quantize(int begin, int end, int qt, int idx) {
 
     for(int i = begin; i <= end - qt + 1; i++) {
         ret = min(ret, getMinDevian(begin, i, idx) + quantize(i+1, end, qt-1, idx));
+        //cout << "(" << qt << ") (" << begin << ", " << i << ") , ( " << i + 1 << ", " <<end << " ) : " << ret << endl;
     }
-    cout << "ret : " << ret << endl;
     return ret;
 }
 
