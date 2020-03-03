@@ -14,4 +14,5 @@ A following table describes lessons learned. These should be actively taken into
 |`QUANTIZE`      |Dynamic Programming            | how to find minimal deviation            |
 |`TRIANGLEPATH`  |Dynamic Programming            | find typography                          |
 |`WILDCARD`      |Dynamic Programming            | **FAIL**                                 |
+|`ASYMTILING`    |Dynamic Programming            | how to calculate modulus of (a-b)        |
 
