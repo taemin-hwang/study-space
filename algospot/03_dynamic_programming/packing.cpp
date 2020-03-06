@@ -7,28 +7,27 @@ using namespace std;
 
 int n, w;
 vector<pair<string, pair<int, int>>> tc;
-int path[101];
-int cache[101];
+int cache[101][1001];
 int getMaxLevel(int pos, int w) {
-    int& ret = cache[pos];
-    if(ret != 0) return 0;
-    if(w < 0) return 0;
+    if(pos == n) return 0;
+    int& ret = cache[pos][w];
+    if(ret != -1) return ret;
 
-    ret = tc[pos].second.second;
-    int maxRet = ret, maxIdx = pos;
-    for(int i = 1; i <= n; i++) {
-        if(cache[i] != 0) {
-            continue;
-        }
-        int tmp = ret + getMaxLevel(i, w - tc[i].second.first);
-        if(maxRet < tmp) {
-            maxIdx = i;
-            maxRet = tmp;
-        }
-        cache[i] = 0;
+    ret = getMaxLevel(pos+1, w);
+    if(w >= tc[pos].second.first)
+        ret = max(ret, getMaxLevel(pos+1, w - tc[pos].second.first) + tc[pos].second.second);
+
+    return ret;
+}
+
+void reconstruct(int pos, int w, vector<string>& ans) {
+    if(pos == n) return;
+    if(getMaxLevel(pos+1, w) == getMaxLevel(pos, w)) {
+        reconstruct(pos+1, w, ans);
+    } else {
+        ans.push_back(tc[pos].first);
+        reconstruct(pos+1, w-tc[pos].second.first, ans);
     }
-    path[pos+1] = maxIdx;
-    return ret = maxRet;
 }
 
 int main() {
@@ -53,11 +52,13 @@ int main() {
         tc = tcs[i];
         n = ns[i];
         w = ws[i];
-        memset(cache, 0, sizeof(cache));
-        cout << getMaxLevel(0, w) << endl;
-        for(int i = 0; i <= 101; i++) {
-            cout << path[i] << " ";
+        vector<string> ans;
+        memset(cache, -1, sizeof(cache));
+        cout << getMaxLevel(0, w);
+        reconstruct(0, w, ans);
+        cout << " " <<  ans.size() << endl;
+        for(auto p : ans) {
+            cout << p << endl;
         }
-        cout << endl;
     }
 }
