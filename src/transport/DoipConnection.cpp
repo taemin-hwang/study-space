@@ -167,6 +167,8 @@ int DoipConnection::HexStr2Arr(char* message, int sz, std::string s) {
 void DoipConnection::InitializeTable() {
     req_sid_table.insert({"10", "Diagnostic Session Control"});
     req_sid_table.insert({"11", "ECU Reset"});
+    req_sid_table.insert({"14", "Clear Diagnostic Information"});
+    req_sid_table.insert({"19", "Read DTC Information"});
     req_sid_table.insert({"27", "Security Access"});
     req_sid_table.insert({"28", "Communication Control"});
     req_sid_table.insert({"3E", "Tester Present"});
@@ -180,6 +182,8 @@ void DoipConnection::InitializeTable() {
 
     res_sid_table.insert({"50", "Diagnostic Session Control"});
     res_sid_table.insert({"51", "ECU Reset"});
+    req_sid_table.insert({"54", "Clear Diagnostic Information"});
+    res_sid_table.insert({"59", "Read DTC Information"});
     res_sid_table.insert({"67", "Security Access"});
     res_sid_table.insert({"68", "Communication Control"});
     res_sid_table.insert({"7E", "Tester Present"});
