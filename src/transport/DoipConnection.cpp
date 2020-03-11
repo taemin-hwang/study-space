@@ -67,7 +67,7 @@ void DoipConnection::ParseUDS(std::string msg) {
             std::cout << "[SID] " << "0x" << req_sid_table.find(req)->first << " : " << req_sid_table.find(req)->second << std::endl;;
             req = msg.substr(2, 2);
             if(nrc_table.find(req) != nrc_table.end()) {
-                std::cout << "[NRC] " << "0x" << nrc_table.find(req)->first << " : " << nrc_table.find(req)->second << std::endl;;
+                std::cout << "\033[1;31m" << "[NRC] " << "0x" << nrc_table.find(req)->first << " : " << nrc_table.find(req)->second << " \033[0m" << std::endl;
             }
         }
     }
@@ -105,6 +105,7 @@ std::string DoipConnection::ParseDoIpHeader(char* msg, int size) {
     for(int i = 0; i < size; i++) {
         msg_str_ += int2hex((int)msg[i]);
     }
+    if(msg_str_.size() < 24) return "";
     std::string protocol_version_ = msg_str_.substr(0, 2);
     std::string inverse_version_  = msg_str_.substr(2, 2);
     std::string message_type_     = msg_str_.substr(4, 4);

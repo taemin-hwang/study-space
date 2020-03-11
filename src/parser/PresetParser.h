@@ -19,7 +19,7 @@ public:
     PresetParser(std::string s);
     virtual ~PresetParser();
     void CreatePreset();
-    void DeletePreset(std::string s);
+    void DeletePreset();
     inline std::map<std::string, std::vector<ReqRes>> GetPreset() { return presets_; }
     std::vector<ReqRes> SelectPreset();
     void PrintPreset();

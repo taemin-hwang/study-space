@@ -36,6 +36,9 @@ void DoipSimulator::Initialize() {
             connection_manager_->SendMessageStream(testcase);
         }
     });
+    delete_preset->setFunction([=]() {
+        preset_parser_->DeletePreset();
+    });
 
     base_->addMenu(test);
     base_->addMenu(setting);

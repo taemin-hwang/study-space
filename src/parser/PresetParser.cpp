@@ -164,8 +164,51 @@ void PresetParser::CreatePreset() {
     fclose(fp);
 }
 
-void PresetParser::DeletePreset(std::string s) {
+void PresetParser::DeletePreset() {
+    int in = 0;
+    int idx = 0;
+    std::vector<std::string> list;
+    list.resize(presets_.size());
+    std::cout << "=====================================================================" << std::endl;
+    std::cout << "[Preset List]" << std::endl;
+    int sz = presets_.size();
+    for(auto m : presets_) {
+        std::cout << "[" << idx+1 << "] " << m.first << std::endl;
+        list[idx] = m.first;
+        idx++;
+    }
+    std::cout << "[" << sz+1 << "] " << "BACK" << std::endl;
+    std::cout << "[Select Preset] : ";
+    std::cin >> in;
 
+    if(in > sz+1) {
+        DeletePreset();
+    } else if(in == sz+1) {
+        return;
+    }
+
+    char readbuffer[65536];
+    char writeBuffer[65536];
+
+    fp = fopen(path_.c_str(), "rb+");
+    FileReadStream is(fp, readbuffer, sizeof(readbuffer));
+    d.ParseStream(is);
+    if(!d.IsObject()) {
+        std::cout << "[DEBUG] Set Object" << std::endl;
+        d.SetObject();
+    }
+
+    FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+    writer = std::make_unique<PrettyWriter<FileWriteStream>>(os);
+
+    d.RemoveMember(list[in-1].c_str());
+    presets_.erase(list[in-1]);
+
+    fp=freopen(NULL,"w",fp);
+    d.Accept(*writer);
+
+    fclose(fp);
+    return;
 }
 
 } /* namespace parser */
