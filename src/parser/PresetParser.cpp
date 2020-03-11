@@ -18,6 +18,8 @@ PresetParser::PresetParser(std::string s) : path_(s){
     FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
     writer = std::make_unique<PrettyWriter<FileWriteStream>>(os);
 
+    fclose(fp);
+
     preset_name.resize(30);
     base.resize(30);
     values.resize(300);
@@ -28,9 +30,6 @@ PresetParser::PresetParser(std::string s) : path_(s){
 }
 
 PresetParser::~PresetParser() {
-    fp=freopen(NULL,"w",fp);
-    d.Accept(*writer);
-    fclose(fp);
 }
 
 void PresetParser::InitializePreset() {
@@ -89,20 +88,22 @@ std::vector<std::pair<std::string, std::string>> PresetParser::SelectPreset() {
     std::cout << "[Preset List]" << std::endl;
     int sz = presets_.size();
     for(auto m : presets_) {
-        std::cout << "[" << idx << "] " << m.first << std::endl;
+        std::cout << "[" << idx+1 << "] " << m.first << std::endl;
         list[idx] = m.first;
         idx++;
     }
-    std::cout << "[" << sz << "] " << "BACK" << std::endl;
+    std::cout << "[" << sz+1 << "] " << "BACK" << std::endl;
     std::cout << "[Select Preset] : ";
     std::cin >> in;
 
     std::vector<std::pair<std::string, std::string>> ret;
 
-    if(in == sz) {
-        return ret;
+    if(in < sz+1) {
+        return presets_[list[in-1]];
+    } else if(in > sz+1) {
+        SelectPreset();
     }
-    return presets_[list[in]];
+    return ret;
 }
 
 void PresetParser::PrintPreset() {
@@ -119,14 +120,29 @@ void PresetParser::CreateValue(Document& d, Value& preset, std::string& request,
 
     preset.AddMember(StringRef("request"), StringRef(request.c_str()), d.GetAllocator());
     preset.AddMember(StringRef("response"), StringRef(response.c_str()), d.GetAllocator());
+
 }
 
 void PresetParser::CreatePreset() {
     std::string ans = "yes";
-    getchar();
+    char readbuffer[65536];
+    char writeBuffer[65536];
+
+    fp = fopen(path_.c_str(), "rb+");
+    FileReadStream is(fp, readbuffer, sizeof(readbuffer));
+    d.ParseStream(is);
+    if(!d.IsObject()) {
+        std::cout << "[DEBUG] Set Object" << std::endl;
+        d.SetObject();
+    }
+
+    FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+    writer = std::make_unique<PrettyWriter<FileWriteStream>>(os);
 
     std::cout <<"[Enter Preset   Name   ] : ";
-    std::getline(std::cin, preset_name[preset_idx]);
+    while(preset_name[preset_idx] == "") {
+        std::getline(std::cin, preset_name[preset_idx]);
+    }
     //std::cin.ignore();
     base[preset_idx].SetArray();
 
@@ -141,6 +157,11 @@ void PresetParser::CreatePreset() {
     d.AddMember(StringRef(preset_name[preset_idx].c_str()), base[preset_idx], d.GetAllocator());
     AddPreset(preset_name[preset_idx]);
     preset_idx++;
+
+    fp=freopen(NULL,"w",fp);
+    d.Accept(*writer);
+
+    fclose(fp);
 }
 
 void PresetParser::DeletePreset(std::string s) {
