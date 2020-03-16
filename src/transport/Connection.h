@@ -53,7 +53,7 @@ private:
     sockaddr_in6 IPv6Bind() {
         sockaddr_in6 addr = {0};
         addr.sin6_family = AF_INET6;
-        addr.sin6_addr = in6addr_any;
+        inet_pton(AF_INET6, ipaddr_.c_str(), &(addr.sin6_addr));
         addr.sin6_port = htons(port_);
         addr.sin6_flowinfo = 0;
         return addr;

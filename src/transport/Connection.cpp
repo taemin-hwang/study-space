@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <locale>
 #include <cstring>
+#include <cstdio>
 #include "Connection.h"
 
 namespace transport {
@@ -66,8 +67,9 @@ void Connection::Initialize() {
                 ShowError("failed to connect");
         }else {
             auto addr = IPv6Bind();
-            if(connect(client, (sockaddr*)&addr, sizeof(addr)) == -1)
+            if(connect(client, (sockaddr*)&addr, sizeof(addr)) == -1) {
                 ShowError("failed to connect");
+            }
         }
         is_init_ = true;
     }
@@ -182,7 +184,7 @@ int Connection::RecvMessage() {
 }
 
 void Connection::ShowError(std::string msg) {
-    std::cout << msg << std::endl;
+    perror(msg.c_str());
     exit(1);
 }
 
