@@ -43,6 +43,19 @@ bool set4(int x, int y, vector<string>& map) {
     return true;
 }
 
+int cache[1<<26];
+
+int getidx(const vector<string> map) {
+    int ret = 1;
+    for(int i = 0 ; i < map.size(); i++) {
+        for(int j = 0; j < map[i].size(); j++) {
+            ret = ret << 1;
+            if(map[i][j] == '#') ret++;
+        }
+    }
+    return ret;
+}
+
 bool blockgame(vector<string> map) {
     //cout << endl;
     //for(int i = 0 ; i < 5; i++) {
@@ -52,30 +65,38 @@ bool blockgame(vector<string> map) {
     //    cout << endl;
     //}
     //getchar();
-
-
-    bool ret = false;
+    int& ret = cache[getidx(map)];
+    if(ret != -1) return ret;
+    ret = 0;
+    int cnt = 0;
+    int fin = 0;
     vector<string> tmp = map;
     for(int i = 0 ; i < 5; i++) {
         for(int j = 0 ; j < 5; j++) {
             tmp = map;
             if(set1(i, j, tmp)) {
-                if(!blockgame(tmp)) ret = true;
+                if(!blockgame(tmp)) cnt++;
+                fin++;
             }
             tmp = map;
             if(set2(i, j, tmp)) {
-                if(!blockgame(tmp)) ret = true;
+                if(!blockgame(tmp)) cnt++;
+                fin++;
             }
             tmp = map;
             if(set3(i, j, tmp)) {
-                if(!blockgame(tmp)) ret = true;
+                if(!blockgame(tmp)) cnt++;
+                fin++;
             }
             tmp = map;
             if(set4(i, j, tmp)) {
-                if(!blockgame(tmp)) ret = true;
+                if(!blockgame(tmp)) cnt++;
+                fin++;
             }
         }
     }
+    if(fin == 0) return ret = 0;
+    if(cnt > 0) return ret = 1;
 
     return ret;
 }
@@ -92,6 +113,7 @@ int main() {
         for(int j = 0 ; j < 5; j++) {
             cin >> map[j];
         }
+        memset(cache, -1, sizeof(cache));
         ans.push_back(blockgame(map));
     }
 
