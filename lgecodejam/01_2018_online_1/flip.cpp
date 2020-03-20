@@ -10,35 +10,41 @@ vector<int> lists;
 int flip(int cmd, int k) {
     int idx;
     double didx;
-    if(cmd == 0 || cmd == n) return k;
     if(cmd > 0) {
-        if(cmd % 2 == 0) {
-            if(cmd < k) return k;
-            didx = (cmd+1)/2;
-            if(didx > k) {
-                idx = didx+1;
+        if(k <= cmd) {
+            if(cmd % 2 != 0) {
+                idx = (cmd+1)/2;
+                k = idx - k + idx;
             } else {
-                idx = didx;
+                didx = (cmd+1.0)/2.0;
+                if(didx > k) {
+                    idx = (cmd+2)/2;
+                    k = idx - k + idx -1;
+                } else {
+                    idx = (cmd)/2;
+                    k = idx - k + idx +1;
+                }
             }
-            k = idx;
         } else {
-            if(cmd < k) return k;
-            idx = (cmd+1)/2;
-            k = 2 * idx - k;
+            return k;
         }
     } else {
-        if(cmd % 2 == 0) {
-            if(n + cmd > k) return k;
-            didx = (n + cmd + n + 1)/2;
-            if(didx > k) {
-                idx = didx+1;
+        if(k > n + cmd) {
+            if(cmd % 2 != 0) {
+                idx = n + cmd + (1-cmd)/2;
+                k = idx - k + idx;
             } else {
-                idx = didx;
+                didx = n + cmd + (1.0-cmd)/2.0;
+                if(didx > k) {
+                    idx = n + cmd +(2-cmd)/2;
+                    k = idx - k +idx -1;
+                } else {
+                    idx = n + cmd +(0-cmd)/2;
+                    k = idx - k +idx +1;
+                }
             }
         } else {
-            if(n + cmd > k) return k;
-            idx = (n + cmd + n + 1)/2;
-            k = 2 * idx - k;
+            return k;
         }
     }
 
@@ -49,13 +55,17 @@ int main() {
     int k, cmd;
     cin >> n >> k >> m;
     lists.resize(n);
+    vector<int> cmds;
     for(int i = 0 ; i < n; i++) {
         cin >> lists[i];
     }
     for(int i = 0; i < m; i++) {
         cin >> cmd;
-        k = flip(cmd, k);
-        cout << k << endl;
+        cmds.push_back(cmd);
+    }
+
+    for(int i = 0 ; i < m; i++) {
+        k = flip(cmds[i], k);
     }
 
     cout << k << endl;
