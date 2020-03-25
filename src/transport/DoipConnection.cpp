@@ -23,7 +23,6 @@ DoipConnection::DoipConnection() {
 
 DoipConnection::~DoipConnection() {
 
-
 }
 
 std::string DoipConnection::GetRouteActivationMsg() {
@@ -115,7 +114,6 @@ std::string DoipConnection::ParseDoIpHeader(char* msg, int size) {
     std::string parsed_msg        = msg_str_.substr(24);
 
     if(message_type_ == "0006") {
-        //std::cout << "| Set Target Address : " << ta_ << std::endl;
         SetTargetAddress(ta_);
     }
 
@@ -157,7 +155,6 @@ int DoipConnection::HexStr2Arr(char* message, int sz, std::string s) {
 
     int idx = 0;
     for(int i = 0; i < s.size(); i += 2) {
-        //std::cout << "message[" << idx << "] : " << " (0x" << s.substr(i,2) << ")" << std::endl;
         message[idx] = hex2dec(s.substr(i, 2));
         idx++;
     }

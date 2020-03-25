@@ -14,6 +14,8 @@
 #include <cstdio>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <locale>
 #include "unistd.h"
 
 #include "parser/Config.h"
@@ -38,11 +40,13 @@ public:
     void SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream);
 
 private:
+    inline void RemoveBlank(std::string& msg){msg.erase(std::remove(msg.begin(), msg.end(), ' '), msg.end());};
+    inline void MakeCapital(std::string& msg){std::transform(msg.begin(), msg.end(), msg.begin(), ::toupper);}
     void ShowError(std::string msg);
     void SendRouteActivate();
     int SendUDSMessage();
     int RecvMessage();
-    int RecvAndCheckMessage(std::string);
+    int RecvMessage(std::string);
     sockaddr_in IPv4Bind() {
         sockaddr_in addr = {0};
         addr.sin_family = AF_INET;

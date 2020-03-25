@@ -4,12 +4,8 @@
  *  Created on: 2020. 2. 21.
  *      Author: taemin.hwang
  */
-#include <vector>
-#include <algorithm>
-#include <locale>
-#include <cstring>
-#include <cstdio>
 #include "Connection.h"
+#include "linux/in6.h"
 
 namespace transport {
 
@@ -54,8 +50,11 @@ void Connection::Initialize() {
     std::cout << "Creating Socket" << std::endl;
     if(ipversion_ == 4)
         client = socket(AF_INET, SOCK_STREAM, 0);
-    else if(ipversion_ == 6)
+    else if(ipversion_ == 6) {
+        const int off = 0;
+        setsockopt(client, IPPROTO_IPV6, IPV6_AUTOFLOWLABEL, &off, sizeof(off));
         client = socket(AF_INET6, SOCK_STREAM, 0);
+    }
 
     if(client == -1)
         ShowError("failed to create client");
@@ -94,11 +93,10 @@ int Connection::SendUDSMessage() {
         std::getline(std::cin, user_message);
         if(user_message != "") break;
     }
-    //std::cin.ignore();
 
     if(user_message == "q" || user_message == "quit") return -1;
 
-    user_message.erase(std::remove(user_message.begin(), user_message.end(), ' '), user_message.end());
+    RemoveBlank(user_message);
     std::string uds_message = doip_connection->AddDoIpHeader(std::string(user_message));
     int size = doip_connection->HexStr2Arr(send_message, BUFSIZE, uds_message);
 
@@ -122,10 +120,10 @@ void Connection::SendMessageStream(std::vector<std::pair<std::string, std::strin
     for(auto str : msg_stream) {
         std::cout << "\033[1;33m*** STEP " << step++ << " ***\033[0m" << std::endl;
         memset(send_message, 0, sizeof(send_message));
-        str.first.erase(std::remove(str.first.begin(), str.first.end(), ' '), str.first.end());
-        str.second.erase(std::remove(str.second.begin(), str.second.end(), ' '), str.second.end());
-        std::transform(str.first.begin(), str.first.end(), str.first.begin(), ::toupper);
-        std::transform(str.second.begin(), str.second.end(), str.second.begin(), ::toupper);
+        RemoveBlank(str.first);
+        MakeCapital(str.first);
+        RemoveBlank(str.second);
+        MakeCapital(str.second);
 
         std::string uds_message = doip_connection->AddDoIpHeader(str.first);
         int size = doip_connection->HexStr2Arr(send_message, BUFSIZE, uds_message);
@@ -135,11 +133,11 @@ void Connection::SendMessageStream(std::vector<std::pair<std::string, std::strin
 
         doip_connection->ParseUDS(str.first);
         std::cout << std::endl;
-        RecvAndCheckMessage(str.second);
+        RecvMessage(str.second);
     }
 }
 
-int Connection::RecvAndCheckMessage(std::string testcase) {
+int Connection::RecvMessage(std::string testcase) {
     char recv_message[BUFSIZE];
     memset(recv_message, 0, sizeof(recv_message));
 
@@ -150,12 +148,24 @@ int Connection::RecvAndCheckMessage(std::string testcase) {
 
     if(rcv == -1) {
         ShowError("failed to receive message from DM");
+    } else if(rcv == 0) {
+        ShowError("disconnected to DM");
     } else {
         recv_message[rcv] = '\0';
         std::string rcv_message = doip_connection->ParseDoIpHeader(recv_message, rcv);
         std::cout << "[Received uds message] : " << rcv_message << std::endl;
         if(is_routed_) doip_connection->ParseUDS(std::string(rcv_message));
-        if(rcv_message != testcase) {
+
+        std::string tc_response;
+        auto pos = testcase.find('*');
+        if(pos != std::string::npos) {
+            tc_response = testcase.substr(0, pos-1);
+            rcv_message = rcv_message.substr(0, pos-1);
+        } else {
+            tc_response = testcase;
+        }
+
+        if(rcv_message != tc_response) {
             std::cout << "\033[1;31mFAIL\033[0m" << std::endl;
         } else {
             std::cout << "\033[1;32mPASS\033[0m " << std::endl;
@@ -174,6 +184,8 @@ int Connection::RecvMessage() {
 
     if(rcv == -1) {
         ShowError("failed to receive message from DM");
+    } else if(rcv == 0) {
+        ShowError("disconnected to DM");
     } else {
         recv_message[rcv] = '\0';
         std::string rcv_message = doip_connection->ParseDoIpHeader(recv_message, rcv);
