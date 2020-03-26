@@ -13,6 +13,8 @@
 #include "parser/ConfigParser.h"
 #include "parser/Config.h"
 #include "transport/Connection.h"
+#include "report/Reporter.h"
+#include "report/TestResult.h"
 
 namespace transport {
 
@@ -24,10 +26,11 @@ public:
     void Initialize();
     void Run();
     void Shutdown();
-    void SendMessageStream(std::vector<std::pair<std::string, std::string>>);
+    void SendMessageStream(std::string, std::vector<std::pair<std::string, std::string>>);
 private:
     std::unique_ptr<Connection> connection_;
     std::unique_ptr<parser::ConfigParser> config_parser_;
+    std::unique_ptr<report::Reporter> reporter_;
     std::string address_;
     int port_;
 };

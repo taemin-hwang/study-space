@@ -21,7 +21,7 @@ public:
     void CreatePreset();
     void DeletePreset();
     inline std::map<std::string, std::vector<ReqRes>> GetPreset() { return presets_; }
-    std::vector<ReqRes> SelectPreset();
+    std::vector<ReqRes> SelectPreset(std::string&);
     void PrintPreset();
 
 private:

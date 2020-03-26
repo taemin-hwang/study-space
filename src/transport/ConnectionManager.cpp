@@ -12,7 +12,9 @@ namespace transport {
 ConnectionManager::ConnectionManager(std::string s = "../etc/Config.json") {
     config_parser_ = std::make_unique<parser::ConfigParser>(s);
     Config cfg_ = config_parser_->getCfg();
+
     connection_ = std::make_unique<Connection>(cfg_);
+    reporter_ = std::make_unique<report::Reporter>();
 }
 
 ConnectionManager::~ConnectionManager() {
@@ -31,8 +33,12 @@ void ConnectionManager::Shutdown() {
     connection_->Shutdown();
 }
 
-void ConnectionManager::SendMessageStream(std::vector<std::pair<std::string, std::string>> testcase) {
-    connection_->SendMessageStream(testcase);
+void ConnectionManager::SendMessageStream(std::string testname, std::vector<std::pair<std::string, std::string>> testcase) {
+    report::TestResult tr(testname);
+    std::vector<bool> testresult = connection_->SendMessageStream(testcase);
+    tr.SetTestCase(testcase);
+    tr.SetTestResult(testresult);
+    reporter_->WriteReport(tr);
 }
 
 } /* namespace transport */

@@ -79,7 +79,7 @@ void PresetParser::AddPreset(std::string new_name) {
     }
 }
 
-std::vector<std::pair<std::string, std::string>> PresetParser::SelectPreset() {
+std::vector<std::pair<std::string, std::string>> PresetParser::SelectPreset(std::string& testname) {
     int in = 0;
     int idx = 0;
     std::vector<std::string> list;
@@ -99,9 +99,10 @@ std::vector<std::pair<std::string, std::string>> PresetParser::SelectPreset() {
     std::vector<std::pair<std::string, std::string>> ret;
 
     if(in < sz+1) {
+        testname = list[in-1];
         return presets_[list[in-1]];
     } else if(in > sz+1) {
-        SelectPreset();
+        SelectPreset(testname);
     }
     return ret;
 }

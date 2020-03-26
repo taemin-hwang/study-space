@@ -11,6 +11,7 @@
 #include <cstring>
 #include <iomanip>
 #include <cstring>
+#include <cmath>
 #include "DoipConnection.h"
 
 

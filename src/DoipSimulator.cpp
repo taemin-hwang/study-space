@@ -31,9 +31,10 @@ void DoipSimulator::Initialize() {
     user->setFunction([=](){ connection_manager_->Run(); });
     create_preset->setFunction([=]() { preset_parser_->CreatePreset();});
     preset->setFunction([=]() {
-        std::vector<std::pair<std::string, std::string>> testcase = preset_parser_->SelectPreset();
+        std::string testname;
+        std::vector<std::pair<std::string, std::string>> testcase = preset_parser_->SelectPreset(testname);
         if(testcase.size() > 0) {
-            connection_manager_->SendMessageStream(testcase);
+            connection_manager_->SendMessageStream(testname, testcase);
         }
     });
     delete_preset->setFunction([=]() {

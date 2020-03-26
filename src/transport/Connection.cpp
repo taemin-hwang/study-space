@@ -110,7 +110,8 @@ int Connection::SendUDSMessage() {
     return 0;
 }
 
-void Connection::SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream) {
+std::vector<bool> Connection::SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream) {
+    std::vector<bool> ret;
     char send_message[BUFSIZE];
     int step = 1;
     if(is_routed_ == false) {
@@ -133,11 +134,13 @@ void Connection::SendMessageStream(std::vector<std::pair<std::string, std::strin
 
         doip_connection->ParseUDS(str.first);
         std::cout << std::endl;
-        RecvMessage(str.second);
+        ret.push_back(RecvMessage(str.second));
     }
+    return ret;
 }
 
 int Connection::RecvMessage(std::string testcase) {
+    int ret = 0;
     char recv_message[BUFSIZE];
     memset(recv_message, 0, sizeof(recv_message));
 
@@ -167,11 +170,13 @@ int Connection::RecvMessage(std::string testcase) {
 
         if(rcv_message != tc_response) {
             std::cout << "\033[1;31mFAIL\033[0m" << std::endl;
+            ret = 0;
         } else {
             std::cout << "\033[1;32mPASS\033[0m " << std::endl;
+            ret = 1;
         }
     }
-    return rcv;
+    return ret;
 }
 int Connection::RecvMessage() {
     char recv_message[BUFSIZE];

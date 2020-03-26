@@ -25,6 +25,7 @@
 #include "arpa/inet.h"
 
 #include "DoipConnection.h"
+#include "report/TestResult.h"
 
 #define BUFSIZE 1024
 
@@ -37,7 +38,7 @@ public:
     void Initialize();
     void Run();
     void Shutdown(){}
-    void SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream);
+    std::vector<bool> SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream);
 
 private:
     inline void RemoveBlank(std::string& msg){msg.erase(std::remove(msg.begin(), msg.end(), ' '), msg.end());};
