@@ -8,11 +8,11 @@
 using namespace std;
 
 int step[301];
-int score[301][3];
+int cache[301][3];
 
 int dp(int nth, int cnt) {
     if(nth <= 0) return 0;
-    int& ret = score[nth][cnt];
+    int& ret = cache[nth][cnt]; // NOTE: param should be memoized in cache
     if(ret != -1) return ret;
 
     ret = step[nth];
@@ -35,6 +35,6 @@ int main() {
         cin >> step[i];
     }
 
-    memset(score, -1, sizeof(score));
+    memset(cache, -1, sizeof(cache));
     cout << dp(n, 1) << endl;
 }
