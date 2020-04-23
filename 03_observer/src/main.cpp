@@ -1,67 +1,21 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-
-using namespace std;
-
-class Observer {
-public:
-    virtual void notify(int data) = 0;
-};
-
-class ConcreteObserverA : public Observer {
-public:
-    void notify(int data) {
-        cout << "A notified : " << data << endl;
-    }
-};
-
-class ConcreteObserverB : public Observer {
-public:
-    void notify(int data) {
-        cout << "B notified : " << data << endl;
-    }
-};
-
-class Subject {
-private:
-    std::vector<Observer*> observers;
-public:
-    void addObserver(Observer* observer);
-    void removeObserver(Observer* observer);
-    void notifyObservers(int data);
-};
-
-void Subject::addObserver(Observer* observer) {
-    observers.push_back(observer);
-}
-
-void Subject::removeObserver(Observer* observer) {
-    for(auto it = observers.begin(); it != observers.end(); ++it) {
-        if(*it == observer) {
-            observers.erase(it);
-            break;
-        }
-    }
-}
-
-void Subject::notifyObservers(int data) {
-    for(auto p : observers) {
-        if(p != nullptr) {
-            p->notify(data);
-        }
-    }
-}
+#include "event/EventManager.h"
+#include "event/GudsHandler.h"
+#include "event/RoutineHandler.h"
 
 int main() {
-    Subject subject;
-    ConcreteObserverA a;
-    ConcreteObserverB b;
+    EventManager event_manager_;
+    GudsHandler a;
+    RoutineHandler b1(1), b2(2);
 
-    // attache subscriber
-    subject.addObserver(&a);
-    subject.addObserver(&b);
+    // add subscriber
+    event_manager_.AddEventHandler(EventType::guds, &a);
+    event_manager_.AddEventHandler(EventType::routine, &b1);
+    event_manager_.AddEventHandler(EventType::routine, &b2);
 
     // broadcast data to subscribers
-    subject.notifyObservers(10);
+    event_manager_.Notify(EventType::guds, 10);
+    event_manager_.Notify(EventType::routine, 20);
 }
