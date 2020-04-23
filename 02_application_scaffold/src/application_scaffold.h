@@ -1,3 +1,6 @@
+#ifndef __APPLICATION_SCAFFOLD_H_
+#define __APPLICATION_SCAFFOLD_H_
+
 #include <iostream>
 #include <atomic>
 #include <csignal>
@@ -80,3 +83,5 @@ class ApplicationScaffold {
         signal_handler.StopWaitingForSignals();
     }
 };
+
+#endif
