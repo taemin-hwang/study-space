@@ -1,0 +1,163 @@
+@startuml
+
+main --> DoipSimulator : doip_simulator
+DoipSimulator --> ConnectionManager : connection_manager_
+DoipSimulator --* PresetParser : preset_parser
+DoipSimulator --> BaseMenu : base_
+BaseMenu <|-down- PopUpMenu
+BaseMenu <|-down- MenuItem
+
+ConfigParser ..> Config
+
+ConnectionManager --> Connection : connection_
+ConnectionManager --> ConfigParser : config_parser_
+ConnectionManager --> Reporter : reporter_
+
+Reporter ..> TestResult
+
+Connection --> DoipConnection : doip_connection
+
+
+class main
+
+class DoipSimulator #white {
+    + void Initialize()
+    + void Run()
+    + void Shutdown()
+    - shared_ptr<ConnectionManager> connection_manager_
+    - unique_ptr<PresetParser> preset_parser_
+    - shared_ptr<BaseMenu> base_
+}
+
+class BaseMenu #white {
+    + string getTitle() const
+    + shared_ptr<BaseMenu> getSubMenu(int idx)
+    + void addMenu(shared_ptr<BaseMenu> p)
+    + void command()
+    - string title
+}
+
+class PopUpMenu #white {
+    + string getTitle() const
+    + shared_ptr<BaseMenu> getSubMenu(int idx)
+    + void addMenu(shared_ptr<BaseMenu> p)
+    + void command()
+    - string title
+    - vector<BaseMenuPtr> menus
+}
+
+class MenuItem #white {
+    + void command()
+    + void setFunction(unction<void()> f_)
+    - function<void()> f
+}
+
+class Config #pink {
+    + string ipaddr = "127.0.0.1"
+    + int ipversion = 4
+    + int port = 13400
+}
+
+class ConfigParser #pink {
+    + Config getCfg()
+}
+
+class PresetParser #pink {
+    + void CreatePreset()
+    + void DeletePreset()
+    + map<string, vector<ResRes>> GetPreset()
+    + vector<ReqRes> SelectPreset(string)
+    + PrintPreset()
+
+    - CreateValue(Document& d, Value& preset, string, string)
+    - InitializePreset()
+    - AddPreset(string)
+
+    - FILE* fp
+    - rapidjson::Document d
+    - unique_ptr<rapidjson::PrettyWriter<FileWriteStream>> writer
+    - map<string, vector<ReqRes>> preset_
+    - string path_
+    - vector<string> preset_name
+    - vector<rapidjson::Value> values
+    - vector<string> request, response
+
+    - int preset_idx
+    - int value_idx
+
+    - vector<rapidjson::Value> base
+}
+
+class Reporter {
+    + bool WriteReport(TestResult&)
+    - string GetDateTime()
+    - bool WriteData(ofstream& wf, const RESULT)
+    - string file_name
+}
+
+class TestResult {
+    + void SetTestCase(vector<pair<string, string>> tc_)
+    + void SetTestResult(vector<bool> tr_)
+    + bool IsValid()
+    + string GetName()
+    + RESULT GetResult()
+    - string test_case
+    - vector<pair<string, string>> testcase
+    - vector<bool> testresult
+}
+
+class Connection #lightblue {
+    + void Initialize()
+    + void Run()
+    + void Shutdown()
+    - void RemoveBlank(string&)
+    - void MakeCapital(string&)
+    - void ShowError(string)
+    - void SendRouteActivate()
+    - int SendUDSMessage()
+    - int RecvMessage()
+    - int RecvMessage(string)
+    - sockaddr_in IPv4Bind()
+    - sockaddr_in6 IPv6Bind()
+
+    - int client
+    - unique_ptr<DoipConnection> doip_connection
+    - string ipaddr_
+    - int ipversion
+    - in port_
+    - bool is_routed_
+    - bool is_init_
+}
+class ConnectionManager #lightblue {
+    + void Initialize()
+    + void Run()
+    + void Shutdown()
+    + SendMessageStream(string, vector<pair<string, string>>)
+    - unique_ptr<Connection> connection_
+    - unique_ptr<ConfigParser> config_parser_
+    - unique_ptr<Reporter> reporter_
+    - int port_
+}
+class DoipConnection #lightblue {
+    + string AddDoIpHeader(string)
+    + string ParseDoIpHeader(char*, int)
+    + string GetRouteActivationMsg()
+    + int HexStrArr(char* message, int sz, string s)
+    + void ParseUds(string msg)
+
+    - string int2hex(T i)
+    - unsigned long hex2dec(string hex)
+    - void SetTargetAddress(string ta_)
+    - void InitializeTable()
+
+    - string protocol_verstion
+    - string inverse_version
+    - string diagnostic_event
+    - string routing_activate
+    - sa
+    - ta
+    - map<string, string> req_sid_table
+    - map<string, string> res_sid_table
+    - map<string, string> nrc_table
+}
+@enduml
