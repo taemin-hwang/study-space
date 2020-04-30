@@ -1,3 +1,5 @@
+// NOTE: main function must be written in main.cpp
+
 #include <iostream>
 #include "sum.h"
 
