@@ -5,6 +5,8 @@
 
 using namespace std;
 
+// promise: producer
+// future : consumer
 void worker(std::promise<string>* p) {
     p->set_value("hello");
 }
@@ -12,6 +14,7 @@ void worker(std::promise<string>* p) {
 int main() {
     std::promise<string> p;
 
+    // future(consumer) make a promise to get data from promise(producer)
     std::future<string> data = p.get_future();
 
     std::thread t(worker, &p);
