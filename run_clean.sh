@@ -6,5 +6,5 @@ if [ -d $dir_name ]
 fi
 
 pushd build
-find . ! -name "CMakeLists.txt" -delete
+find . ! -name "test" -delete
 popd
