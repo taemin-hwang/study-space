@@ -162,8 +162,8 @@ int Connection::RecvMessage(std::string testcase) {
         std::string tc_response;
         auto pos = testcase.find('*');
         if(pos != std::string::npos) {
-            tc_response = testcase.substr(0, pos-1);
-            rcv_message = rcv_message.substr(0, pos-1);
+            tc_response = testcase.substr(0, pos);
+            rcv_message = rcv_message.substr(0, pos);
         } else {
             tc_response = testcase;
         }
