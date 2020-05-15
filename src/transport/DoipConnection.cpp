@@ -41,10 +41,11 @@ std::string DoipConnection::GetRouteActivationMsg() {
     return route_msg;
 }
 
-void DoipConnection::ParseUDS(std::string msg) {
+std::string DoipConnection::ParseUDS(std::string msg) {
     std::transform(msg.begin(), msg.end(), msg.begin(), ::toupper);
+    std::string ret;
 
-    if(msg.size() < 2) return;
+    if(msg.size() < 2) return std::move("Wrong DoIP Header");
     std::string req = msg.substr(0, 2);
     if(req_sid_table.find(req) != req_sid_table.end()) {
         std::cout << "[SID] " << "0x" << req_sid_table.find(req)->first << " : " << req_sid_table.find(req)->second << std::endl;
@@ -54,7 +55,7 @@ void DoipConnection::ParseUDS(std::string msg) {
         msg = msg.substr(2);
     }
 
-    if(msg.size() < 4) return;
+    if(msg.size() < 4) return std::move("Wrong UDS Header");
     if(req == "22" || req == "2E") {
         std::cout << "[DID] " << "0x" << msg.substr(0, 4) << std::endl;
         msg = msg.substr(4);
@@ -68,13 +69,15 @@ void DoipConnection::ParseUDS(std::string msg) {
             req = msg.substr(2, 2);
             if(nrc_table.find(req) != nrc_table.end()) {
                 std::cout << "\033[1;31m" << "[NRC] " << "0x" << nrc_table.find(req)->first << " : " << nrc_table.find(req)->second << " \033[0m" << std::endl;
+                ret = "[NRC] 0x" + std::string(nrc_table.find(req)->first) + " : " + nrc_table.find(req)->second;
             }
         }
     }
 
-    if(msg.size() < 1) return;
+    if(msg.size() < 1) return std::move("Wrong UDS Header");
     std::cout<< "[PAYLOAD] " << "0x" << msg << std::endl;
 
+    return ret;
 }
 
 std::string DoipConnection::AddDoIpHeader(std::string msg) {

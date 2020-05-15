@@ -21,7 +21,7 @@ public:
     std::string ParseDoIpHeader(char* msg, int size);
     std::string GetRouteActivationMsg();
     int HexStr2Arr(char* message, int sz, std::string s);
-    void ParseUDS(std::string msg);
+    std::string ParseUDS(std::string msg);
 
 private:
     template <typename T>

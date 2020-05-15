@@ -14,7 +14,6 @@
 #include "parser/Config.h"
 #include "transport/Connection.h"
 #include "report/Reporter.h"
-#include "report/TestResult.h"
 
 namespace transport {
 

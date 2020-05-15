@@ -25,7 +25,7 @@
 #include "arpa/inet.h"
 
 #include "DoipConnection.h"
-#include "report/TestResult.h"
+#include "report/Reporter.h"
 
 #define BUFSIZE 1024
 
@@ -38,7 +38,7 @@ public:
     void Initialize();
     void Run();
     void Shutdown(){}
-    std::vector<bool> SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream);
+    std::vector<report::TestReport> SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream);
 
 private:
     inline void RemoveBlank(std::string& msg){msg.erase(std::remove(msg.begin(), msg.end(), ' '), msg.end());};
@@ -47,7 +47,7 @@ private:
     void SendRouteActivate();
     int SendUDSMessage();
     int RecvMessage();
-    int RecvMessage(std::string);
+    int RecvMessage(std::string tc_response, report::TestReport& tr);
     sockaddr_in IPv4Bind() {
         sockaddr_in addr = {0};
         addr.sin_family = AF_INET;

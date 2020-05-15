@@ -34,11 +34,7 @@ void ConnectionManager::Shutdown() {
 }
 
 void ConnectionManager::SendMessageStream(std::string testname, std::vector<std::pair<std::string, std::string>> testcase) {
-    report::TestResult tr(testname);
-    std::vector<bool> testresult = connection_->SendMessageStream(testcase);
-    tr.SetTestCase(testcase);
-    tr.SetTestResult(testresult);
-    reporter_->WriteReport(tr);
+    reporter_->WriteReport(testname, connection_->SendMessageStream(testcase));
 }
 
 } /* namespace transport */

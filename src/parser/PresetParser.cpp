@@ -8,6 +8,12 @@ PresetParser::PresetParser(std::string s) : path_(s){
     char readbuffer[65536];
     char writeBuffer[65536];
     fp = fopen(path_.c_str(), "rb+");
+
+    if(fp == nullptr) {
+        std::cout << "[ERROR] no such file or directory : " <<  s << std::endl;
+        exit(1);
+    }
+
     FileReadStream is(fp, readbuffer, sizeof(readbuffer));
     d.ParseStream(is);
     if(!d.IsObject()) {
