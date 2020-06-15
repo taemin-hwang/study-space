@@ -110,10 +110,12 @@ int Connection::SendUDSMessage() {
     return 0;
 }
 
-std::vector<bool> Connection::SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream) {
-    std::vector<bool> ret;
+std::vector<report::TestReport> Connection::SendMessageStream(std::vector<std::pair<std::string, std::string>> msg_stream) {
+    std::vector<report::TestReport> ret;
+    ret.resize(msg_stream.size());
+
     char send_message[BUFSIZE];
-    int step = 1;
+    int step = 1, idx = 0;
     if(is_routed_ == false) {
         SendRouteActivate();
     }
@@ -134,12 +136,14 @@ std::vector<bool> Connection::SendMessageStream(std::vector<std::pair<std::strin
 
         doip_connection->ParseUDS(str.first);
         std::cout << std::endl;
-        ret.push_back(RecvMessage(str.second));
+
+        ret[idx].request = str.first;
+        RecvMessage(str.second, ret[idx++]);
     }
     return ret;
 }
 
-int Connection::RecvMessage(std::string testcase) {
+int Connection::RecvMessage(std::string tc_response, report::TestReport& tr) {
     int ret = 0;
     char recv_message[BUFSIZE];
     memset(recv_message, 0, sizeof(recv_message));
@@ -155,26 +159,31 @@ int Connection::RecvMessage(std::string testcase) {
         ShowError("disconnected to DM");
     } else {
         recv_message[rcv] = '\0';
-        std::string rcv_message = doip_connection->ParseDoIpHeader(recv_message, rcv);
-        std::cout << "[Received uds message] : " << rcv_message << std::endl;
-        if(is_routed_) doip_connection->ParseUDS(std::string(rcv_message));
-
-        std::string tc_response;
-        auto pos = testcase.find('*');
-        if(pos != std::string::npos) {
-            tc_response = testcase.substr(0, pos);
-            rcv_message = rcv_message.substr(0, pos);
-        } else {
-            tc_response = testcase;
+        std::string s_rcv_message = doip_connection->ParseDoIpHeader(recv_message, rcv);
+        std::cout << "[Received uds message] : " << s_rcv_message << std::endl;
+        if(is_routed_) {
+            tr.response = std::string(s_rcv_message);
+            tr.comment = doip_connection->ParseUDS(std::string(s_rcv_message));
         }
 
-        if(rcv_message != tc_response) {
+        std::string parsed_tc_response;
+        auto pos = tc_response.find('*');
+        if(pos != std::string::npos) {
+            parsed_tc_response = tc_response.substr(0, pos);
+            s_rcv_message = s_rcv_message.substr(0, pos);
+        } else {
+            parsed_tc_response = tc_response;
+        }
+
+        if(s_rcv_message != parsed_tc_response) {
             std::cout << "\033[1;31mFAIL\033[0m" << std::endl;
             ret = 0;
         } else {
             std::cout << "\033[1;32mPASS\033[0m " << std::endl;
             ret = 1;
         }
+
+        tr.result = (ret == 1) ? report::Result::PASS : report::Result::FAIL;
     }
     return ret;
 }

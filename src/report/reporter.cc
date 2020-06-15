@@ -18,34 +18,36 @@ const std::string Reporter::GetDateTime() {
     return buf;
 }
 
-bool Reporter::WriteReport(const TestResult& tr) {
-    if(!tr.IsValid()) return false;
-
+bool Reporter::WriteReport(std::string test_name, const std::vector<report::TestReport>& test_report) {
     std::ofstream wf;
     wf.open(file_name.c_str(), std::ios_base::app);
     wf << file_name+"\n";
-    wf << tr.GetName()+"\n";
-    WriteData(wf, tr.GetResult());
+    wf << test_name+"\n";
+    WriteData(wf, test_report);
     wf.close();
     return true;
 }
 
-bool Reporter::WriteData(std::ofstream& wf, const RESULT res) {
+bool Reporter::WriteData(std::ofstream& wf, const std::vector<report::TestReport>& test_report) {
     if(!wf.is_open()) return false;
     std::string result;
 
-    wf << "no, request, response, result \n";
-    for(int i = 0 ; i < res.size(); i++) {
-        wf << std::to_string(i+1)+",";
-        wf << res[i].first.first+",";
-        wf << res[i].first.second+",";
-        if(res[i].second) {
+    wf << "no, request, response, result, comment \n";
+
+    int i = 0;
+    for(const auto &p : test_report) {
+        wf << std::to_string(++i)+",";
+        wf << p.request + ",";
+        wf << p.response + ",";
+        if(p.result == Result::PASS) {
             result = "PASS";
         } else {
             result = "FAIL";
         }
-        wf << result+"\n";
+        wf << result + ",";
+        wf << p.comment + "\n";
     }
+
     return true;
 }
 
