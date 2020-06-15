@@ -11,10 +11,10 @@
 #include <vector>
 #include <memory>
 #include <string>
-#include "transport/ConnectionManager.h"
-#include "parser/PresetParser.h"
-#include "menu/PopupMenu.h"
-#include "menu/MenuItem.h"
+#include "transport/connection_manager.h"
+#include "parser/preset_parser.h"
+#include "menu/popup_menu.h"
+#include "menu/menu_item.h"
 
 using BaseMenuPtr = std::shared_ptr<BaseMenu>;
 using PopupMenuPtr = std::shared_ptr<PopupMenu>;

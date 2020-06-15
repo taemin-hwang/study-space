@@ -18,14 +18,14 @@
 #include <locale>
 #include "unistd.h"
 
-#include "parser/Config.h"
 #include "sys/types.h"
 #include "sys/socket.h"
 #include "netinet/in.h"
 #include "arpa/inet.h"
 
-#include "DoipConnection.h"
-#include "report/TestResult.h"
+#include "parser/config.h"
+#include "doip_connection.h"
+#include "report/test_result.h"
 
 #define BUFSIZE 1024
 

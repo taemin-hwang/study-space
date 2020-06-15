@@ -2,7 +2,7 @@
 #define _POPUPMENU_H_
 
 #include <vector>
-#include "menu/BaseMenu.h"
+#include "menu/base_menu.h"
 
 using BaseMenuPtr = std::shared_ptr<BaseMenu>;
 

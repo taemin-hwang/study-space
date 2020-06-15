@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <cstdio>
-#include "parser/ConfigParser.h"
+#include "parser/config_parser.h"
 
 using namespace rapidjson;
 

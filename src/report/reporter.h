@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "report/TestResult.h"
+#include "report/test_result.h"
 
 namespace report{
 

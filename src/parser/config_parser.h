@@ -8,7 +8,7 @@
 #ifndef SRC_PARSER_CONFIGPARSER_H_
 #define SRC_PARSER_CONFIGPARSER_H_
 #include <string>
-#include "parser/Config.h"
+#include "parser/config.h"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"

@@ -2,7 +2,7 @@ project (doipgen)
 set (APP_NAME doipgen)
 
 file(GLOB_RECURSE SOURCES
-    ${WORKING_DIR}/src/*.cpp
+    ${WORKING_DIR}/src/*.cc
 )
 
 message("${WORKING_DIR}")

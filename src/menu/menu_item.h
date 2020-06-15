@@ -4,7 +4,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
-#include "menu/BaseMenu.h"
+#include "menu/base_menu.h"
 
 class MenuItem : public BaseMenu {
     int id;

@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <cstring>
 #include <cmath>
-#include "DoipConnection.h"
+#include "doip_connection.h"
 
 
 namespace transport {

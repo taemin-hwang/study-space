@@ -10,11 +10,11 @@
 
 #include <memory>
 #include <string>
-#include "parser/ConfigParser.h"
-#include "parser/Config.h"
-#include "transport/Connection.h"
-#include "report/Reporter.h"
-#include "report/TestResult.h"
+#include "parser/config_parser.h"
+#include "parser/config.h"
+#include "transport/connection.h"
+#include "report/reporter.h"
+#include "report/test_result.h"
 
 namespace transport {
 

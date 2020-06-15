@@ -5,7 +5,7 @@
  *      Author: taemin.hwang
  */
 
-#include "DoipSimulator.h"
+#include "doip_packet_builder.h"
 
 DoipSimulator::DoipSimulator(std::string s = "../etc/config.json") {
     connection_manager_ = std::make_shared<transport::ConnectionManager>(s);

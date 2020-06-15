@@ -4,7 +4,7 @@
  *  Created on: 2020. 2. 21.
  *      Author: taemin.hwang
  */
-#include "Connection.h"
+#include "connection.h"
 #include "linux/in6.h"
 
 namespace transport {

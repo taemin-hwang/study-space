@@ -8,7 +8,7 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include "DoipSimulator.h"
+#include "doip_packet_builder.h"
 
 std::string path = "../etc/config.json";
 

@@ -1,6 +1,6 @@
 #include <ctime>
 #include <fstream>
-#include "report/Reporter.h"
+#include "report/reporter.h"
 
 namespace report{
 Reporter::Reporter() {
@@ -22,7 +22,7 @@ bool Reporter::WriteReport(const TestResult& tr) {
     if(!tr.IsValid()) return false;
 
     std::ofstream wf;
-    wf.open(file_name.c_str());
+    wf.open(file_name.c_str(), std::ios_base::app);
     wf << file_name+"\n";
     wf << tr.GetName()+"\n";
     WriteData(wf, tr.GetResult());
