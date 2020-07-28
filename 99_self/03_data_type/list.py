@@ -18,3 +18,8 @@ print("Sort ", prime)
 
 del prime[3]
 print("Delete 3rd element ", prime)
+
+#list append, insert(id, val), extend(append_list)
+prime.insert(1, 5)
+prime.extend([1, 2, 3, 4])
+print(prime)
