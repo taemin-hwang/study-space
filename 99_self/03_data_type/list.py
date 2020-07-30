@@ -23,3 +23,8 @@ print("Delete 3rd element ", prime)
 prime.insert(1, 5)
 prime.extend([1, 2, 3, 4])
 print(prime)
+
+# remove list element
+prime.remove(1)
+prime.pop(1)
+del prime[1]
