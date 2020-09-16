@@ -1,0 +1,19 @@
+@startuml
+
+left to right direction
+
+actor CFO
+actor COO
+actor CTO
+
+package Employee {
+    usecase "calculatePay" as uc1
+    usecase "reportHour" as uc2
+    usecase "save" as uc3
+}
+
+CFO --> uc1
+COO --> uc2
+CTO --> uc3
+
+@enduml

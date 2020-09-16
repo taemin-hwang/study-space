@@ -1,0 +1,11 @@
+@startuml
+
+UI -right-> Rule : code dependency
+Rule <-left- Database : code dependency
+UI <.. Rule : control flow
+Rule ..> Database : control flow
+
+interface Rule
+class Database
+
+@enduml

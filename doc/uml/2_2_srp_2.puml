@@ -1,0 +1,21 @@
+@startuml
+
+payCalcualtor --> EmployeeData
+HourReporter --> EmployeeData
+EmployeeSaver --> EmployeeData
+
+class payCalcualtor {
+    + calculatePay
+}
+
+class HourReporter {
+    + reportHours
+}
+
+class EmployeeSaver {
+    + saveEmployee
+}
+
+class EmployeeData
+
+@enduml

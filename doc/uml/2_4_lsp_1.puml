@@ -1,0 +1,12 @@
+@startuml
+
+Billing -right-> License
+License <|-down- PersonalLicense
+License <|-down- BusinessLicense
+
+class Billing
+Interface License
+class PersonalLicense
+class BusinessLicense
+
+@enduml
