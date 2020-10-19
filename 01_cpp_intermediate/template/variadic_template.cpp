@@ -12,7 +12,8 @@ void print0() {
     cout << "hello" << endl;
 }
 
-template <typename F, typename ... Args>
+// typename... : parameter pack
+template <typename F, typename... Args>
 void Print(F f, Args... args) {
     //f(args...);
     auto f1 = std::bind(f, args...);
