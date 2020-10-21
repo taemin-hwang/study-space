@@ -1,5 +1,5 @@
-project (googletest)
-set (APP_NAME googletest)
+project (factory)
+set (APP_NAME factory)
 
 message("${WORKING_DIR}")
 
@@ -17,7 +17,3 @@ link_libraries (pthread)
 add_executable (${APP_NAME} ${SOURCES})
 
 install(TARGETS ${APP_NAME} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/opt/)
-
-if(ENABLE_TEST)
-    add_subdirectory(test)
-endif()

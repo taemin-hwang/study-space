@@ -1,11 +1,11 @@
 set (TEST_NAME test-googletest)
 
 file(GLOB_RECURSE SOURCES
-    ${WORKING_DIR}/src/*.cpp
-    ${WORKING_DIR}/test/src/*.cpp
+    ${WORKING_DIR}/src/*.cc
+    ${WORKING_DIR}/test/src/*.cc
 )
 
-list(REMOVE_ITEM SOURCES ${WORKING_DIR}/src/main.cpp)
+list(REMOVE_ITEM SOURCES ${WORKING_DIR}/src/main.cc)
 
 add_compile_options (--std=c++1y -g)
 
