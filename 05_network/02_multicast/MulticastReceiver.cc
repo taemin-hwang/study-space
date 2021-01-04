@@ -32,6 +32,12 @@ int main(int argc, char *argv[]) {
   if (sock < 0)
     DieWithSystemMessage("socket() failed");
 
+  // Add SO_REUSEADDR socket option
+  int optvalue;
+  if (setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &optvalue, sizeof(optvalue)) < 0) {
+    DieWithSystemMessage("setsockopt(SO_REUSEPORT) failed");
+  }
+
   if (bind(sock, multicastAddr->ai_addr, multicastAddr->ai_addrlen) < 0)
     DieWithSystemMessage("bind() failed");
 
