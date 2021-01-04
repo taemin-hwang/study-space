@@ -13,7 +13,7 @@ public:
 
 class ConcreteObserverA : public IEventHandler {
 public:
-    void notify(int data) {
+    void execute(int data) {
         cout << "A notified : " << data << endl;
     }
 };

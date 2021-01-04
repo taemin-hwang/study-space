@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include "mediator/mediator.h"
-#include "mediator/interface/event/event.h"
 
 using namespace std;
 class BaseInterface {

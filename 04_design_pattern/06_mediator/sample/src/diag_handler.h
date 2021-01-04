@@ -4,7 +4,7 @@
 #include <thread>
 #include <chrono>
 #include "mediator/interface_mediator.h"
-#include "component/diag/diag_manager.h"
+#include "manager/diag/diag_manager.h"
 
 class DiagHandler {
  public:
