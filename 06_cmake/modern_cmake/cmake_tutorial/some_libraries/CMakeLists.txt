@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 3.5)
 project(SomeLibraries VERSION 1.0 LANGUAGES CXX)
 add_library(SomeLibraryA SHARED src/some_library_a.cpp)
 
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../out)
-
 ## you might have noticed that SomeLibraries packages defines 2 targets (SomeLibraryA, SomeLibraryB)
 ## 'target_include_directories' it is specifying include path for the target
 ## you can see this as if the object "SomeLibraryA" is calling its member function 'target_include_directories'
@@ -45,7 +43,7 @@ SomeLibrariesTargets.cmake
 NAMESPACE
 SomeLibraries::
 DESTINATION
-${CMAKE_INSTALL_PREFIX}/lib/cmake/SomeLibraries
+lib/cmake/SomeLibraries
 )
 
 install(FILES

@@ -10,3 +10,6 @@ In general, there are three ways to access a CMake project from another Cmake pr
 
 In this post, we will select third option.
 Hence, the three packages are not in the same CMake tree.
+
+## CMAKE_INSTALL_PREFIX
+cmake -DCMAKE_INSTALL_PREFIX=${PWD}/out/ ..

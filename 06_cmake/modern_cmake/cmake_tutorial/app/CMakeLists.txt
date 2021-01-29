@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(MyApplication VERSION 1.0 LANGUAGES CXX)
 
-set(MyLibraries_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../out/lib/cmake/MyLibraries)
-
 find_package(MyLibraries REQUIRED)
 
 add_executable(MyApplication src/main.cpp)

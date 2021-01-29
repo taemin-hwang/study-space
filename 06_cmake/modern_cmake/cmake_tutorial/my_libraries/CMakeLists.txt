@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(MyLibraries VERSION 1.0 LANGUAGES CXX)
 
-set(SomeLibraries_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../out/lib/cmake/SomeLibraries)
-set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/../out)
-
 ## it uses find_package(some_libraries REQUIRED) to import SomeLibraries package.
 ## This triffers CMake to search for SomeLibrariesConfig.cmake file.
 find_package(SomeLibraries REQUIRED)
@@ -20,6 +17,7 @@ $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 
 ## by adding PRIVATE keyword, it is specifying that the MyLibararyA's dependency to SomeLibraryB as "private"
 ## Although other target link MyLibraryA, inherited properties from SomeLibraryB will not be passed.
+
 target_link_libraries(MyLibraryA
 PUBLIC
 SomeLibraries::SomeLibraryA
