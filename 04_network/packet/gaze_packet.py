@@ -11,11 +11,12 @@ class GazePacket:
     def __init__(self, display_id):
         print('Create Gaze Packet')
         self.display_id = display_id
+        self.type_of_service = 2
 
     def GetData(self, input_x, input_y):
         GazeStruct = namedtuple("GazeStruct", "tos id len x y")
         TupleToSend = GazeStruct(
-            tos=2,
+            tos=self.type_of_service,
             id=self.display_id,
             len=8,
             x=input_x,

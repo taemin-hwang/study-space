@@ -11,11 +11,12 @@ class TouchPacket:
     def __init__(self, display_id):
         print('Create Touch Packet')
         self.display_id = display_id
+        self.type_of_service = 0
 
     def GetData(self, input_x, input_y):
         TouchStruct = namedtuple("TouchStruct", "tos id len x y")
         TupleToSend = TouchStruct(
-            tos=0,
+            tos=self.type_of_service,
             id=self.display_id,
             len=8,
             x=input_x,

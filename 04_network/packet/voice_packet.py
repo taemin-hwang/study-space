@@ -10,11 +10,12 @@ class VoicePacket:
     def __init__(self, display_id):
         print('Create Voice Packet')
         self.display_id = display_id
+        self.type_of_service = 3
 
     def GetData(self, input_len, input_txt):
         VoiceStruct = namedtuple("VoiceStruct", "tos id len txt")
         TupleToSend = VoiceStruct(
-            tos=3,
+            tos=self.type_of_service,
             id=self.display_id,
             len=input_len,
             txt=input_txt.encode("ascii")

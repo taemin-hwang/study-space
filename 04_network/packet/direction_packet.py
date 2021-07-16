@@ -10,11 +10,12 @@ class DirectionPacket:
     def __init__(self, display_id):
         print('Create Direction Packet')
         self.display_id = display_id
+        self.type_of_service = 1
 
     def GetData(self, input_direction):
         DirectionStruct = namedtuple("DirectionStruct", "tos id len direction")
         TupleToSend = DirectionStruct(
-            tos=1,
+            tos=self.type_of_service,
             id=self.display_id,
             len=4,
             direction=input_direction
