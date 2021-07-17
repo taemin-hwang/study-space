@@ -25,7 +25,7 @@ class TouchPacket:
         #print(TouchPacketFormat)
         #print(TupleToSend)
         #print(*TupleToSend._asdict().values())
-        
+
         StringToSend = struct.pack(TouchPacketFormat, *TupleToSend._asdict().values())
         return StringToSend
 

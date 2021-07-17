@@ -23,6 +23,6 @@ class DirectionPacket:
         #print(DirectionPacketFormat)
         #print(TupleToSend)
         #print(*TupleToSend._asdict().values())
-        
+
         StringToSend = struct.pack(DirectionPacketFormat, *TupleToSend._asdict().values())
         return StringToSend
