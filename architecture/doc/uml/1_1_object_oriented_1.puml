@@ -1,0 +1,12 @@
+@startuml
+
+Main -down-> HL1
+Main -down-> HL2
+Main -down-> HL3
+HL1 -down-> ML1
+HL2 -down-> ML2
+HL3 -down-> ML3
+
+class Main
+
+@enduml

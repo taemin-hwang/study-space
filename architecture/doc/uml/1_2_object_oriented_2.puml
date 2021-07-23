@@ -1,0 +1,10 @@
+@startuml
+
+Main -down-> HL1
+HL1 -right-> Interface
+ML -up-|> Interface
+
+class HL1
+interface Interface
+
+@enduml
