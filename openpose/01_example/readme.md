@@ -1,7 +1,5 @@
 ## How to get distance between user and depth-camera
-Openpose can detect body part locations (x, y) and detection confidence, and also Intel Realsense D435 can support to measure distance from camera.
-
-With these functions, this code provide a distance between a user and Intel Realsense depth camera.
+Openpose can detect body part locations (x, y) and detection confidence, and also Intel Realsense D435 can support to measure distance from camera. With these functions, this code provide a distance between a user and Intel Realsense depth camera.
 
 ### Prerequisite
 * Openpose
