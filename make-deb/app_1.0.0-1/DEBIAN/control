@@ -1,0 +1,6 @@
+Package: app
+Version: 1.0.0
+Maintainer: taemin <taemin.hwang@keti.re.kr>
+Description: test package
+Architecture: amd64
+Depends: git
