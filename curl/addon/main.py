@@ -1,14 +1,22 @@
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import socketserver
+import socket
+import json
 
-class MyHTTPRequestHandler( BaseHTTPRequestHandler ):
+class MyHTTPRequestHandler(BaseHTTPRequestHandler):
     def do_GET(self):
-        print( 'get방식 요청' )
+        print( 'GET requenst handler' )
+        #json_string = json.dumps(self.message)
+        self.send_response(200)
+        self.send_header('Content-Type', 'text/html; charset=utf-8')
+        self.end_headers()
+        self.wfile.write('<h1>hello</h1>'.encode('utf-8'))
 
     def do_POST(self):
-        print( 'post방식 요청' )
+        print( 'POST request handler' )
         content_len = int(self.headers.get('Content-Length'))
         post_body = self.rfile.read(content_len)
+        self.message = post_body
         print(post_body)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
@@ -18,6 +26,12 @@ class MyHTTPRequestHandler( BaseHTTPRequestHandler ):
         # must encode for python 3+
         self.wfile.write(output.encode())
 
-with socketserver.TCPServer(('127.0.0.1', 50001), MyHTTPRequestHandler) as httpd:
-  print('Server listening on port 50001...')
-  httpd.serve_forever()
+class MyTCPServer(socketserver.TCPServer):
+    def server_bind(self):
+        self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.socket.bind(self.server_address)
+
+Handler = MyHTTPRequestHandler
+httpd = MyTCPServer(('127.0.0.1', 50001), Handler)
+print('Server listening on port 50001...')
+httpd.serve_forever()
