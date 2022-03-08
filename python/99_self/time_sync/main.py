@@ -63,7 +63,7 @@ def get_valid_dlt_element(matching_table):
 
     return valid_dlt_element
 
-def set_matching_table(mq, lk, matching_table):
+def set_matching_table(mq, lk, matching_table, t_start, t_end):
     lk.acquire()
     qsize = mq.qsize()
 
@@ -71,6 +71,18 @@ def set_matching_table(mq, lk, matching_table):
     for i in range(qsize):
         data = mq.get()
         print(data)
+        t = data[0]
+        if t_start == -1:
+            t_start = data[0]
+            t_end = data[0] + time_delta_/1000
+        elif t < t_start:
+            print(t, ' is less than ', t_start)
+        elif t > t_end:
+            print(t, ' is greater than ', t_end)
+            mq.put(data)
+            break
+        else:
+            print('*****: ', data)
         # break, if timestamp not exist between valid range
         # update, if timestamp exist between valid range
     print('=======================================================')
@@ -87,8 +99,11 @@ def restore_3d_pose():
     matching_table = get_test_table(cams)
     #matching_table = get_initial_matching_table(cams)
 
+    t_start = -1
+    t_end = -1
+
     while True:
-        set_matching_table(mq_, lk_, matching_table)
+        set_matching_table(mq_, lk_, matching_table, t_start, t_end)
         valid_dlt_element = get_valid_dlt_element(matching_table)
 
         if valid_dlt_element['count'] >= min_cam_:
