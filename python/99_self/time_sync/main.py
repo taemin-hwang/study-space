@@ -20,8 +20,6 @@ target_fps_ = 1000/time_delta_
 mq_ = PriorityQueue()
 lk_ = threading.Lock()
 
-arr_3d_ = np.empty((5, 25, 4))
-
 def get_initial_matching_table(cams):
     matching_table = {}
     for cam_id in range(1, cam_num_+1):
@@ -171,6 +169,9 @@ def restore_3d_pose():
             valid_keypoint = np.stack(valid_dlt_element['valid_keypoint'], axis=0)
             valid_p = np.stack(valid_dlt_element['valid_P'], axis=0)
             out = batch_triangulate(valid_keypoint, valid_p)
+            out[:, 0] = -1*out[:, 0]
+            out[:, 1] = -1*out[:, 1]
+            out[:, 2] = -1*out[:, 2]
             sender.send_3d_skeletons(out)
             reset_matching_table(matching_table)
         else:
@@ -242,7 +243,7 @@ def test_work_cam4(mq, lk):
         r = random.random()
         r -= 0.5
         r_diff = r/10
-        timestamp = datetime.datetime.now().timestamp() + r_diff - 3
+        timestamp = datetime.datetime.now().timestamp() + r_diff
 
         mq.put((timestamp, {'id': 4, 'timestamp': timestamp, 'keypoints': keypoints}))
         lk.release()
