@@ -14,10 +14,12 @@ import skeleton_sender as ss
 
 cam_num_ = 4
 min_cam_ = 2
-time_delta_ = 50 # milli-seconds
+min_confidence_ = 0.5
+time_delta_ = 40 # milli-seconds
 target_fps_ = 1000/time_delta_
 
-mq_ = PriorityQueue()
+#mq_ = PriorityQueue()
+mq_ = Queue()
 lk_ = threading.Lock()
 
 def get_initial_matching_table(cams):
@@ -70,7 +72,7 @@ def get_valid_dlt_element(matching_table):
 
     return valid_dlt_element
 
-def set_matching_table(mq, lk, matching_table, t_start, t_end, t_diff):
+def sync_matching_table(mq, lk, matching_table, t_start, t_end, t_diff):
     lk.acquire()
     qsize = mq.qsize()
 
@@ -95,6 +97,26 @@ def set_matching_table(mq, lk, matching_table, t_start, t_end, t_diff):
                 matching_table[str(cam_id)]['keypoint'] = keypoints
     lk.release()
     return (t_start, t_end, t_diff)
+
+def use_previous_frame(matching_table, t_start, t_end):
+    for cam_id in range(1, cam_num_+1):
+        if matching_table[str(cam_id)]['is_valid'] is False:
+            if t_start - matching_table[str(cam_id)]['timestamp'] < time_delta_*4:
+                matching_table[str(cam_id)]['is_valid'] = True
+
+def use_latest_matching_table(mq, lk, matching_table):
+    lk.acquire()
+    qsize = mq.qsize()
+
+    for i in range(qsize):
+        data = mq.get()
+        cam_id = data[1]['id']
+        timestamp = data[1]['timestamp']
+        keypoints = data[1]['keypoints']
+        matching_table[str(cam_id)]['is_valid'] = True
+        matching_table[str(cam_id)]['timestamp'] = timestamp
+        matching_table[str(cam_id)]['keypoint'] = keypoints
+    lk.release()
 
 def is_time_expired(t_start, t_end, t_diff):
     if t_end - t_diff >= datetime.datetime.now().timestamp():
@@ -148,7 +170,7 @@ def batch_triangulate(keypoints_, Pall):
     return result
 
 
-def restore_3d_pose():
+def restore_3d_pose(enable_sync):
     param_dir = './etc/'
     intri_path = param_dir+'intri.yml'
     extri_path = param_dir+'extri.yml'
@@ -159,8 +181,14 @@ def restore_3d_pose():
     matching_table = get_initial_matching_table(cams)
     t = get_initial_time()
 
+    print('Time synchronization : ', enable_sync)
+
     while True:
-        t = set_matching_table(mq_, lk_, matching_table, t[0], t[1], t[2])
+        if enable_sync is True:
+            t = sync_matching_table(mq_, lk_, matching_table, t[0], t[1], t[2])
+            use_previous_frame(matching_table, t[0], t[1])
+        else:
+            use_latest_matching_table(mq_, lk_, matching_table)
 
         valid_dlt_element = get_valid_dlt_element(matching_table)
         print(valid_dlt_element['valid_timestamp'])
@@ -172,6 +200,7 @@ def restore_3d_pose():
             out[:, 0] = -1*out[:, 0]
             out[:, 1] = -1*out[:, 1]
             out[:, 2] = -1*out[:, 2]
+            out[:, 3][out[:, 3] < min_confidence_] = 0
             sender.send_3d_skeletons(out)
             reset_matching_table(matching_table)
         else:
@@ -186,74 +215,102 @@ import random
 import json
 
 def test_work_cam1(mq, lk):
-    filename = './triangulation/annots/cam1.json'
-    with open(filename, "r") as json_file:
-        json_data = json.load(json_file)
-        keypoints = np.array(json_data['annots'][0]['keypoints'])
-    while True:
-        lk.acquire()
-        r = random.random()
-        r -= 0.5
-        r_diff = r/20
-        timestamp = datetime.datetime.now().timestamp() + r_diff
+    cam_id = 1
+    for frame_id in range(5, 1799):
+        filename = str(frame_id).zfill(6) + '.json'
+        directory = './annots/' + str(cam_id) + '/'
+        with open(directory+filename, "r") as json_file:
+            json_data = json.load(json_file)
+            keypoints = np.array(json_data['annots'][0]['keypoints'])
 
+        timestamp = datetime.datetime.now().timestamp() + frame_id*20/1000
+
+        lk.acquire()
         mq.put((timestamp, {'id': 1, 'timestamp': timestamp, 'keypoints': keypoints}))
         lk.release()
-        time.sleep(20/1000)
+
+        r = random.random()
+        r -= 0.5
+        r_diff = r/40
+        time.sleep(time_delta_/1000 + r_diff)
 
 def test_work_cam2(mq, lk):
-    filename = './triangulation/annots/cam2.json'
-    with open(filename, "r") as json_file:
-        json_data = json.load(json_file)
-        keypoints = np.array(json_data['annots'][0]['keypoints'])
-    while True:
-        lk.acquire()
-        r = random.random()
-        r -= 0.5
-        r_diff = r/10
-        timestamp = datetime.datetime.now().timestamp() + r_diff
+    cam_id = 2
+    for frame_id in range(5, 1799):
+        filename = str(frame_id).zfill(6) + '.json'
+        directory = './annots/' + str(cam_id) + '/'
+        with open(directory+filename, "r") as json_file:
+            json_data = json.load(json_file)
+            keypoints = np.array(json_data['annots'][0]['keypoints'])
 
+        timestamp = datetime.datetime.now().timestamp() + frame_id*20/1000
+
+        lk.acquire()
         mq.put((timestamp, {'id': 2, 'timestamp': timestamp, 'keypoints': keypoints}))
         lk.release()
-        time.sleep(20/1000)
+
+        r = random.random()
+        r -= 0.5
+        r_diff = r/40
+        time.sleep(time_delta_/1000 + r_diff)
 
 def test_work_cam3(mq, lk):
-    filename = './triangulation/annots/cam3.json'
-    with open(filename, "r") as json_file:
-        json_data = json.load(json_file)
-        keypoints = np.array(json_data['annots'][0]['keypoints'])
-    while True:
-        lk.acquire()
-        r = random.random()
-        r -= 0.5
-        r_diff = r/50
-        timestamp = datetime.datetime.now().timestamp() + r_diff
+    cam_id = 3
+    for frame_id in range(5, 1799):
+        filename = str(frame_id).zfill(6) + '.json'
+        directory = './annots/' + str(cam_id) + '/'
+        with open(directory+filename, "r") as json_file:
+            json_data = json.load(json_file)
+            keypoints = np.array(json_data['annots'][0]['keypoints'])
 
+        timestamp = datetime.datetime.now().timestamp() + frame_id*20/1000
+
+        lk.acquire()
         mq.put((timestamp, {'id': 3, 'timestamp': timestamp, 'keypoints': keypoints}))
         lk.release()
-        time.sleep(20/1000)
 
-def test_work_cam4(mq, lk):
-    filename = './triangulation/annots/cam4.json'
-    with open(filename, "r") as json_file:
-        json_data = json.load(json_file)
-        keypoints = np.array(json_data['annots'][0]['keypoints'])
-    while True:
-        lk.acquire()
         r = random.random()
         r -= 0.5
-        r_diff = r/10
-        timestamp = datetime.datetime.now().timestamp() + r_diff
+        r_diff = r/40
+        time.sleep(time_delta_/1000 + r_diff)
 
+def test_work_cam4(mq, lk):
+    cam_id = 4
+    for frame_id in range(5, 1799):
+        filename = str(frame_id).zfill(6) + '.json'
+        directory = './annots/' + str(cam_id) + '/'
+        with open(directory+filename, "r") as json_file:
+            json_data = json.load(json_file)
+            keypoints = np.array(json_data['annots'][0]['keypoints'])
+
+        timestamp = datetime.datetime.now().timestamp() + frame_id*20/1000
+
+        lk.acquire()
         mq.put((timestamp, {'id': 4, 'timestamp': timestamp, 'keypoints': keypoints}))
         lk.release()
-        time.sleep(20/1000)
+
+        r = random.random()
+        r -= 0.5
+        r_diff = r/40
+        time.sleep(time_delta_/1000 + r_diff)
+
+import sys
+
+enable_sync = True
+if sys.argv.count('-nosync'):
+    enable_sync = False
+elif sys.argv.count('-nonsync'):
+    enable_sync = False
+elif sys.argv.count('nonsync'):
+    enable_sync = False
+else:
+    enable_sync = True
 
 t1 = threading.Thread(target=test_work_cam1, args=(mq_, lk_))
 t2 = threading.Thread(target=test_work_cam2, args=(mq_, lk_))
 t3 = threading.Thread(target=test_work_cam3, args=(mq_, lk_))
 t4 = threading.Thread(target=test_work_cam4, args=(mq_, lk_))
-t5 = threading.Thread(target=restore_3d_pose)
+t5 = threading.Thread(target=restore_3d_pose, args=((enable_sync,)))
 
 t1.start()
 t2.start()
