@@ -87,6 +87,6 @@ def print_camera_parameter(cams):
     print('   P : ', cams[str(i)]['P'])
 
 #dir = './etc'
-#
+
 #intri_path = dir+'intri.yml'
 #extri_path = dir+'extri.yml'
