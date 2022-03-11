@@ -4,5 +4,9 @@
 
 int main() {
     auto driver_tracker = std::make_unique<DriverTracker>();
-    driver_tracker->DriverHeatmapHandler();
+
+    driver_tracker->Initialize();
+    driver_tracker->Run();
+    driver_tracker->Shutdown();
+
 }
