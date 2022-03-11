@@ -10,7 +10,7 @@
 
 class TransferManager : public TransferInterface {
  public:
-    TransferManager() = default;
+    TransferManager();
     virtual ~TransferManager() = default;
 
     void Initialize();
@@ -22,9 +22,11 @@ class TransferManager : public TransferInterface {
     void SendUiControl(int ui_control);
 
  private:
-    std::unique_ptr<SocketManager> socket_manager_;
-    std::unique_ptr<MessageQueueManager> messagequeue_manager_;
-    std::unique_ptr<SharedMemoryManager> sharedmemory_manager_;
+    std::unique_ptr<SocketManager> sk_manager_;
+    std::unique_ptr<MessageQueueManager> mq_manager_;
+    std::unique_ptr<SharedMemoryManager> sm_manager_2d_skeleton_;
+    std::unique_ptr<SharedMemoryManager> sm_manager_3d_skeleton_;
+    std::unique_ptr<SharedMemoryManager> sm_manager_driver_status_;
 };
 
 #endif

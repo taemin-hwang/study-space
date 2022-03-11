@@ -9,7 +9,7 @@
 
 class DriverTracker {
  public:
-    DriverTracker() = default;
+    DriverTracker();
     virtual ~DriverTracker() = default;
 
     void Initialize();

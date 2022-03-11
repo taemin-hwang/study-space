@@ -7,6 +7,7 @@ class TransferInterface {
  public:
     TransferInterface() = default;
     virtual ~TransferInterface() = default;
+    virtual void Initialize() = 0;
 
     virtual void Get2DSkeleton() = 0;
     virtual void Send2DSkeleton(int camid, float skeleton_2d[][2]) = 0;

@@ -12,3 +12,5 @@ add_definitions(-std=c++14)
 target_link_libraries(${PROJECT_NAME} pthread)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/opt/${PROJECT_NAME}/bin/)
+
+add_subdirectory(addon)
