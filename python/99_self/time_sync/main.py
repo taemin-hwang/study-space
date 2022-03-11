@@ -14,9 +14,10 @@ import skeleton_sender as ss
 
 cam_num_ = 4
 min_cam_ = 2
-min_confidence_ = 0.5
+min_confidence_ = 0.4
 time_delta_ = 40 # milli-seconds
 target_fps_ = 1000/time_delta_
+buffer_size_ = 5
 
 #mq_ = PriorityQueue()
 mq_ = Queue()
@@ -183,6 +184,9 @@ def restore_3d_pose(enable_sync):
 
     print('Time synchronization : ', enable_sync)
 
+    frame_buffer = np.ones((buffer_size_, 25, 4))
+    ret = np.zeros((25, 4))
+
     while True:
         if enable_sync is True:
             t = sync_matching_table(mq_, lk_, matching_table, t[0], t[1], t[2])
@@ -197,11 +201,39 @@ def restore_3d_pose(enable_sync):
             valid_keypoint = np.stack(valid_dlt_element['valid_keypoint'], axis=0)
             valid_p = np.stack(valid_dlt_element['valid_P'], axis=0)
             out = batch_triangulate(valid_keypoint, valid_p)
-            out[:, 0] = -1*out[:, 0]
-            out[:, 1] = -1*out[:, 1]
-            out[:, 2] = -1*out[:, 2]
-            out[:, 3][out[:, 3] < min_confidence_] = 0
-            sender.send_3d_skeletons(out)
+
+            # moving average
+            frame_buffer = np.roll(frame_buffer, -1, axis=0)
+            frame_buffer[buffer_size_-1] = out
+
+            for i in range(out.shape[0]):
+                parts = frame_buffer[:, i, :]
+                xdata = parts[:, 0]
+                ydata = parts[:, 1]
+                zdata = parts[:, 2]
+                cdata = parts[:, 3]*100
+
+                if np.sum(cdata) < 0.01:
+                    break
+
+                #print('xdata :', xdata)
+                #print('ydata :', ydata)
+                #print('zdata :', zdata)
+                #print('cdata :', cdata)
+
+                x_avg = np.average(xdata, weights=cdata)
+                y_avg = np.average(ydata, weights=cdata)
+                z_avg = np.average(zdata, weights=cdata)
+                c_avg = np.average(cdata, weights=cdata)
+                ret[i] = [x_avg, y_avg, z_avg, c_avg/100]
+
+            # send 3d skeleton
+            ret[:, 0] = -1*ret[:, 0]
+            ret[:, 1] = -1*ret[:, 1]
+            ret[:, 2] = -1*ret[:, 2]
+            ret[:, 3][ret[:, 3] < min_confidence_] = 0
+            sender.send_3d_skeletons(ret)
+
             reset_matching_table(matching_table)
         else:
             print('Skip to restore 3D pose, number of valid data is ', valid_dlt_element['count'])
@@ -231,7 +263,8 @@ def test_work_cam1(mq, lk):
 
         r = random.random()
         r -= 0.5
-        r_diff = r/40
+        #r_diff = r/40
+        r_diff = r * time_delta_ / 2 / 1000
         time.sleep(time_delta_/1000 + r_diff)
 
 def test_work_cam2(mq, lk):
@@ -251,7 +284,8 @@ def test_work_cam2(mq, lk):
 
         r = random.random()
         r -= 0.5
-        r_diff = r/40
+        #r_diff = r/40
+        r_diff = r * time_delta_ / 2 / 1000
         time.sleep(time_delta_/1000 + r_diff)
 
 def test_work_cam3(mq, lk):
@@ -271,7 +305,8 @@ def test_work_cam3(mq, lk):
 
         r = random.random()
         r -= 0.5
-        r_diff = r/40
+        #r_diff = r/40
+        r_diff = r * time_delta_ / 2 / 1000
         time.sleep(time_delta_/1000 + r_diff)
 
 def test_work_cam4(mq, lk):
@@ -291,7 +326,7 @@ def test_work_cam4(mq, lk):
 
         r = random.random()
         r -= 0.5
-        r_diff = r/40
+        r_diff = r * time_delta_ / 2 / 1000
         time.sleep(time_delta_/1000 + r_diff)
 
 import sys
