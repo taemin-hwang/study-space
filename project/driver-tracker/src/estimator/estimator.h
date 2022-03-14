@@ -8,6 +8,7 @@ class Estimator {
     Estimator() = default;
     virtual ~Estimator() = default;
 
+    void Estimate2DPose();
     void Estimate3DPose();
     void EstimateDriverMotion();
     void EstimateDriverStatus();

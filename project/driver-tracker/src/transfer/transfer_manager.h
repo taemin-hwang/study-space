@@ -15,7 +15,7 @@ class TransferManager : public TransferInterface {
 
     void Initialize();
 
-    void Get2DSkeleton();
+    void GetHeatmap();
     void Send2DSkeleton(int camid, float skeleton_2d[][2]);
     void Send3DSkeleton(float skeleton_3d[][3]);
     void SendDriverStatus(int driver_status);

@@ -22,7 +22,7 @@ void DriverTracker::Initialize(){
 void DriverTracker::Run(){
     std::cout << __func__ << std::endl;
 
-    transfer_->Get2DSkeleton();
+    transfer_->GetHeatmap();
 
     int camid = 0;
     float skeleton_2d[11][2];

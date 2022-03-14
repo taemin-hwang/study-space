@@ -19,7 +19,7 @@ void TransferManager::Initialize(){
     sm_manager_driver_status_->Initialize();
 }
 
-void TransferManager::Get2DSkeleton(){
+void TransferManager::GetHeatmap(){
     std::cout << __func__ << std::endl;
     int data;
     sk_manager_->ReceiveData(&data, 4);
