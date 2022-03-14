@@ -29,12 +29,10 @@ class TestManager {
     int sm_3d_key_ = 50004;
     int sm_ds_key_ = 50005;
 
-    key_t mq_id_, sm_2d_id_, sm_3d_id_, sm_ds_id_;
+    int mq_id_, sm_2d_id_, sm_3d_id_, sm_ds_id_;
 };
 
 void TestManager::Initialize() {
-
-
     while(1) {
         mq_id_ = msgget((key_t)mq_key_, IPC_CREAT|0666);
         sm_2d_id_ = shmget((key_t)sm_2d_key_, sizeof(struct Skeleton2d), 0);
@@ -62,6 +60,11 @@ void TestManager::Run() {
     void* sm_ds_mem = (void*)0;
 
     std::cout << "Try to receive message from mq" << std::endl;
+
+    sm_2d_mem = shmat(sm_2d_id_, (const void*)0, 0);
+    sm_3d_mem = shmat(sm_3d_id_, (const void*)0, 0);
+    sm_ds_mem = shmat(sm_ds_id_, (const void*)0, 0);
+
     std::cout << "=====================================" << std::endl;
     while(1) {
         // UI Control from MessageQueue
@@ -75,13 +78,10 @@ void TestManager::Run() {
             std::cout << "-------------------------------------" << std::endl;
         }
 
-        // 2D Skeleton from SharedMemory
-        // sm_2d_mem = shmat(sm_2d_id_, (void *)0, 0666|IPC_CREAT);
-        sm_2d_mem = shmat(sm_2d_id_, NULL, 0);
         if (sm_2d_mem == (void *)-1) {
             perror("shmat attach is failed ");
         } else {
-            memcpy(&skeleton_2d, sm_2d_mem, sizeof(skeleton_2d));
+            memcpy(&skeleton_2d, sm_2d_mem, sizeof(struct Skeleton2d));
             std::cout << "-------------------------------------" << std::endl;
             std::cout << "[1] Type    : " << skeleton_2d.msgtype << std::endl;
             std::cout << "[2] Length  : " << skeleton_2d.length << std::endl;
@@ -90,11 +90,10 @@ void TestManager::Run() {
         }
 
         // 2D Skeleton from SharedMemory
-        sm_3d_mem = shmat(sm_3d_id_, NULL, 0);
         if (sm_3d_mem == (void *)-1) {
             perror("shmat attach is failed ");
         } else {
-            memcpy(&skeleton_3d, sm_3d_mem, sizeof(skeleton_3d));
+            memcpy(&skeleton_3d, sm_3d_mem, sizeof(struct Skeleton3d));
             std::cout << "-------------------------------------" << std::endl;
             std::cout << "[1] Type    : " << skeleton_3d.msgtype << std::endl;
             std::cout << "[2] Length  : " << skeleton_3d.length << std::endl;
@@ -102,24 +101,25 @@ void TestManager::Run() {
         }
 
         // 2D Skeleton from SharedMemory
-        sm_ds_mem = shmat(sm_ds_id_, NULL, 0);
         if (sm_ds_mem == (void *)-1) {
             perror("shmat attach is failed ");
         } else {
-            memcpy(&driver_status, sm_ds_mem, sizeof(driver_status));
+            memcpy(&driver_status, sm_ds_mem, sizeof(struct DriverStatus));
             std::cout << "-------------------------------------" << std::endl;
             std::cout << "[1] Type    : " << driver_status.msgtype << std::endl;
             std::cout << "[2] Length  : " << driver_status.length << std::endl;
+            std::cout << "[3] Status  : " << driver_status.status << std::endl;
             std::cout << "-------------------------------------" << std::endl;
         }
 
-        std::this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(100ms);
     }
     std::cout << "=====================================" << std::endl;
 }
 
 int main() {
-    cout << "Hello addon" << endl;
+    cout << "Hello addon!" << endl;
     auto test_manager = make_unique<TestManager>();
+    test_manager->Initialize();
     test_manager->Run();
 }
