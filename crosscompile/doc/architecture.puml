@@ -1,0 +1,51 @@
+@startuml
+
+DriverTracker -down-> PoseEstimator
+DriverTracker -down-> TransferInterface
+DriverTracker -left-> MessageFormat
+
+TransferInterface <|-down- TransferManager
+TransferManager -down-> SocketManager
+TransferManager -down-> MessageQueueManager
+TransferManager -down-> SharedMemoryManager
+
+class DriverTracker {
+
+}
+
+class PoseEstimator #Pink {
+  void Estimate2dPose()
+  void Estimate3dPose()
+  void EstimateDriverMotion()
+  void EstimateDriverStatus()
+}
+
+interface TransferInterface #LightYellow {
+  GetHeatmap()
+  Send2dSkeleton(int camid, float skeleton_2d[][2])
+  Send3dSkeleton(float skeleton_3d[][3])
+  SendDriverMotion(int driver_status)
+  SendDriverStatus(int ui_control)
+}
+
+class TransferManager #LightYellow {
+
+}
+
+class SocketManager #LightYellow {
+
+}
+
+class MessageQueueManager #LightYellow {
+  MessageQueueManager(int key_id)
+  void Initialize()
+  int SendData(const void *data, int data_size)
+}
+
+class SharedMemoryManager #LightYellow {
+  SharedMemoryManager(int key_id, int size)
+  void Initialize()
+  int SendData(const void *data, int data_size)
+}
+
+@enduml
