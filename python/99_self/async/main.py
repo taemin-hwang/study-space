@@ -2,15 +2,13 @@ import time
 import asyncio
 
 async def good_night(message):
-    await asyncio.sleep(1)
+    #await asyncio.sleep(1)
     print(message)
     return "thank you, " + message
 
 async def main(messages):
-    ret = await asyncio.gather(
-        good_night(messages[0]),
-        good_night(messages[1])
-    )
+    task = [good_night(message) for message in messages]
+    ret = await asyncio.gather(*task)
     return ret
 
 for i in range(10):
