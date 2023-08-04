@@ -1,3 +1,6 @@
+#ifndef _IMAGE_MANAGER_H_
+#define _IMAGE_MANAGER_H_
+
 #include <iostream>
 #include <cstdint>
 #include <fstream>
@@ -22,3 +25,5 @@ public:
 private:
     cv::VideoCapture cap;
 };
+
+#endif

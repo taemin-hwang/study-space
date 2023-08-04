@@ -1,3 +1,6 @@
+#ifndef _FACE_DETECTOR_H_
+#define _FACE_DETECTOR_H_
+
 #include "face_detection.h"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
@@ -17,3 +20,5 @@ public:
 private:
     seeta::FaceDetection detector;
 };
+
+#endif
