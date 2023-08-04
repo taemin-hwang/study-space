@@ -1,7 +1,16 @@
 #include "image_manager.h"
 
-ImageManager::ImageManager() : cap(0){
+ImageManager::ImageManager(bool camera_option, std::string video_path) : camera_option_(camera_option){
     std::cout << "Create Opencv Manager" << std::endl;
+
+    if (camera_option_ == true) {
+        cv::VideoCapture tmp(0);
+        cap = tmp;
+    } else {
+        cv::VideoCapture tmp(video_path);
+        cap = tmp;
+    }
+
     // Check if the camera is opened successfully
     if (!cap.isOpened()) {
         std::cout << "Camera could not be opened." << std::endl;
@@ -32,21 +41,22 @@ cv::Mat ImageManager::change_image_gray(const cv::Mat& image) {
     return img_gray;
 }
 
-cv::Mat ImageManager::get_blurred_face_image(const cv::Mat& image, const std::vector<cv::Rect>& faces, double sigma) {
+cv::Mat ImageManager::get_blurred_face_image(const cv::Mat& image, const std::vector<TrackedObject>& faces, double sigma) {
     cv::Rect face_rect, roi_rect;
     int32_t num_face = static_cast<int32_t>(faces.size());
 
     // Create a copy of the original image to preserve it
     for (int32_t i = 0; i < num_face; i++) {
-        face_rect.x = faces[i].x;
-        face_rect.y = faces[i].y;
-        face_rect.width = faces[i].width;
-        face_rect.height = faces[i].height;
+        face_rect.x = faces[i].rect.x;
+        face_rect.y = faces[i].rect.y;
+        face_rect.width = faces[i].rect.width;
+        face_rect.height = faces[i].rect.height;
 
-        cv::rectangle(image, face_rect, CV_RGB(0, 0, 255), 4, 8, 0);
+        int face_id = faces[i].id;
 
-        int kernel_size = 15;
-        // double sigma = 100.0; // Standard deviation in X direction
+        cv::rectangle(image, face_rect, colors[face_id % colors.size()], 4, 8, 0);
+
+        int kernel_size = 21;
         roi_rect.x = std::max(face_rect.x, 0);
         roi_rect.y = std::max(face_rect.y, 0);
         roi_rect.width = std::min(face_rect.width, image.cols - face_rect.x);
