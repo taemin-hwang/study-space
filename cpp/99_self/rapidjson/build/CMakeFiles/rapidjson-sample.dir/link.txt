@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic "CMakeFiles/rapidjson-sample.dir/src/main.o" -o rapidjson-sample 

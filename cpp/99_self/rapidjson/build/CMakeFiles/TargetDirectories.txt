@@ -1,0 +1,3 @@
+/home/uni/Workspace/git/study-space/cpp/99_self/rapidjson/build/CMakeFiles/rapidjson-sample.dir
+/home/uni/Workspace/git/study-space/cpp/99_self/rapidjson/build/CMakeFiles/edit_cache.dir
+/home/uni/Workspace/git/study-space/cpp/99_self/rapidjson/build/CMakeFiles/rebuild_cache.dir
