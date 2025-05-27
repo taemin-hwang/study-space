@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p build
+
 working_dir=${PWD}/
 
 dir_name="./var/"

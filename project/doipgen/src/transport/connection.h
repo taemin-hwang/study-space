@@ -25,6 +25,7 @@
 
 #include "parser/config.h"
 #include "doip_connection.h"
+#include "report/reporter.h"
 
 #define BUFSIZE 1024
 

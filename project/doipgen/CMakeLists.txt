@@ -14,6 +14,7 @@ include_directories(
     "${WORKING_DIR}/src/parser"
     "${WORKING_DIR}/src/transport"
     "${WORKING_DIR}/src/report"
+    "${WORKING_DIR}/thirdparty"
 )
 
 link_libraries (pthread)
